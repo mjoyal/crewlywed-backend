@@ -10,6 +10,8 @@ const sass       = require("node-sass-middleware");
 const app        = express();
 const morgan     = require('morgan');
 
+
+
 // PG database client/connection setup
 const { Pool } = require('pg');
 const dbParams = require('./lib/db.js');
@@ -20,6 +22,20 @@ db.connect();
 app.use(morgan('dev'));
 
 // Add to app???: app.use(bodyparser.json()); (In scheduler-api)
+
+
+// WebSockets trial
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+
+io.on('connection', socket => {
+  console.log('a user connected');
+  socket.emit('test', 'hello from server');
+  socket.on('disconnect', () => {
+    console.log('a user disconnected');
+  });
+});
+
 
 // Below are separated Routes for each Resource. All routes for each Resource are defined in the Resource's respective file. Since these files are loaded in server.js into api/:resource, routes in these files are mounted after initial pathway. For more info: https://expressjs.com/en/guide/using-middleware.html#middleware.router.
 const avatarsRoutes = require("./routes/avatars");
@@ -47,3 +63,4 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
+
