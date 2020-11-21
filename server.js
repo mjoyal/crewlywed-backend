@@ -22,8 +22,21 @@ app.get('/', (req, res) => {
   res.send("Welcome to the CrewlyWed API.");
 });
 
+
+
+
+
 io.on('connection', () => {
   console.log('user connected')
+
+
+  db.query(`SELECT * FROM avatars;`)
+    .then(data => {
+      const avatars = data.rows;
+      io.emit('avatar', avatars);
+    })
+
+
 });
 
  server.listen(PORT, () => {
