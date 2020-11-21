@@ -17,40 +17,31 @@ const db = new Pool(dbParams);
 db.connect();
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
-// 'dev' = Concise output colored by response status for development use.
-//         The :status token will be colored red for server error codes, yellow for client error codes, cyan for redirection codes, and uncolored for all other codes.
 app.use(morgan('dev'));
 
-app.set("view engine", "ejs");
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/styles", sass({
-  src: __dirname + "/styles",
-  dest: __dirname + "/public/styles",
-  debug: true,
-  outputStyle: 'expanded'
-}));
-app.use(express.static("public"));
+// Add to app???: app.use(bodyparser.json()); (In scheduler-api)
 
-// Separated Routes for each Resource
-// Note: Feel free to replace the example routes below with your own
-const usersRoutes = require("./routes/users");
-const widgetsRoutes = require("./routes/widgets");
+// Below are separated Routes for each Resource. All routes for each Resource are defined in the Resource's respective file. Since these files are loaded in server.js into api/:resource, routes in these files are mounted after initial pathway. For more info: https://expressjs.com/en/guide/using-middleware.html#middleware.router.
+const avatarsRoutes = require("./routes/avatars");
+const choicesRoutes = require("./routes/choices");
+const playersRoutes = require("./routes/players");
+const questionsRoutes = require("./routes/questions");
+const roundsRoutes = require("./routes/rounds");
+const sessionsRoutes = require("./routes/sessions");
+const submissionsRoutes = require("./routes/submissions");
 
 // Mount all resource routes
-// Note: Feel free to replace the example routes below with your own
-app.use("/api/users", usersRoutes(db));
-app.use("/api/widgets", widgetsRoutes(db));
-// Note: mount other resources here, using the same pattern above
+app.use("/api/avatars", avatarsRoutes(db));
+app.use("/api/choices", choicesRoutes(db));
+app.use("/api/players", playersRoutes(db));
+app.use("/api/questions", questionsRoutes(db));
+app.use("/api/rounds", roundsRoutes(db));
+app.use("/api/sessions", sessionsRoutes(db));
+app.use("/api/submissions", submissionsRoutes(db));
 
-
-// Home page
-// Warning: avoid creating more routes in this file!
-// Separate them into separate routes files (see above).
-app.get("/", (req, res) => {
-  db.query('SELECT * FROM players')
-    .then((data) => {
-      res.send(data); 
-    });
+//The below is the only route defined in this file. The rest are defined directly above.
+app.get('/', (req, res) => {
+  res.send("Welcome to the CrewlyWed API.");
 });
 
 app.listen(PORT, () => {
