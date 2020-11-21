@@ -10,6 +10,50 @@ const sass       = require("node-sass-middleware");
 const app        = express();
 const morgan     = require('morgan');
 
+
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  }
+});
+
+app.get('/', (req, res) => {
+  res.send("Welcome to the CrewlyWed API.");
+});
+
+
+
+
+
+io.on('connection', () => {
+  console.log('user connected')
+
+
+  db.query(`SELECT * FROM avatars;`)
+    .then(data => {
+      const avatars = data.rows;
+      io.emit('avatar', avatars);
+    })
+
+
+});
+
+ server.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}`);
+});
+
+
+
+
+
+
+
+
+
+
+
+
 // PG database client/connection setup
 const { Pool } = require('pg');
 const dbParams = require('./lib/db.js');
@@ -40,10 +84,4 @@ app.use("/api/sessions", sessionsRoutes(db));
 app.use("/api/submissions", submissionsRoutes(db));
 
 //The below is the only route defined in this file. The rest are defined directly above.
-app.get('/', (req, res) => {
-  res.send("Welcome to the CrewlyWed API.");
-});
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}`);
-});
