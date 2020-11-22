@@ -14,7 +14,7 @@ CREATE TABLE sessions (
   created_at TIMESTAMP,
   finished_at TIMESTAMP,
   code VARCHAR(50) NOT NULL,
-  num_rounds SMALLINT NOT NULL
+  rounds_per_player SMALLINT NOT NULL
 );
 
 CREATE TABLE avatars (
