@@ -1,6 +1,6 @@
 const generateRoomCode = function(length) {
   let random = '';
-  const options = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const options = 'abcdefghijklmnopqrstuvwxyz0123456789';
   for (let i = 0; i < length; i++) {
     random += options.charAt(Math.floor(Math.random() * options.length));
   }
@@ -8,4 +8,4 @@ const generateRoomCode = function(length) {
 };
 
 
-module.exports = {generateRoomCode}; 
+module.exports = {generateRoomCode};
