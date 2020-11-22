@@ -10,6 +10,12 @@ const sass       = require("node-sass-middleware");
 const app        = express();
 const morgan     = require('morgan');
 const server     = require('http').createServer(app);
+
+// generate random code
+
+const {generateRoomCode} = require('./helpers');
+
+
 const io = require('socket.io')(server, {
   cors: {
     origin: '*',
@@ -29,7 +35,7 @@ app.use(morgan('dev'));
 
 
 //Establish socket.io connection:
-io.on('connection', () => {
+io.on('connection', (socket) => {
   console.log('user connected')
 
   db.query(`SELECT * FROM avatars;`)
@@ -38,6 +44,16 @@ io.on('connection', () => {
       io.emit('avatar', avatars);
     })
 
+    // room code
+
+    socket.on("join room", (room) => {
+      socket.join(room);
+      io.to(room).emit('show code', room);
+    });
+
+    socket.on('message', (messageData) => {
+      io.to(messageData.room).emit('message', messageData);
+    });
 });
 
 // Basic "Hello World" route to test this server is working:
@@ -48,6 +64,7 @@ app.get('/', (req, res) => {
 
 // RESTful route below. NOTE: We are probably using sockets in lieu of RESTful routes. But I am keeping the below for now (which could be used as a template for routes for other resources) until that decision is final.
 const avatarsRoutes = require("./routes/avatars");
+const { Socket } = require('socket.io');
 app.use("/api/avatars", avatarsRoutes(db));
 
 
