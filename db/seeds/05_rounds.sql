@@ -1,4 +1,4 @@
-INSERT INTO rounds (question_id, victim_id, started_at, finished_at)
+INSERT INTO rounds (question_id, victim_id, started_at, ended_at)
 VALUES
 (1, 1, '2020-11-11 00:01:00', '2020-11-11 00:04:00'),
 (2, 2, '2020-11-11 00:05:00', '2020-11-11 00:09:00'),
