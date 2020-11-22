@@ -40,7 +40,8 @@ CREATE TABLE rounds (
   id SERIAL PRIMARY KEY,
   question_id INTEGER REFERENCES questions(id) ON DELETE CASCADE,
   victim_id INTEGER REFERENCES players(id) ON DELETE CASCADE,
-  started_at TIMESTAMP
+  started_at TIMESTAMP,
+  ended_at TIMESTAMP
 );
 
 CREATE TABLE submissions (
