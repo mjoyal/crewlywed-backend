@@ -80,7 +80,25 @@ io.on('connection', socket => {
       });
     });
 
-    //2. getScore:
+    //2. getAvatar:
+    socket.on('avatar', userID => {
+      db.query(`
+      SELECT image_url
+      FROM avatars
+      JOIN players ON players.avatar_id = avatars.id
+      WHERE players.id = ${userID}
+      ;`)
+      .then(data => {
+        if (data.rows[0].image_url) {
+          console.log(`[Data Flow Test #2:] Avatar sent for player ${userID}`);
+          socket.emit('avatarReturn', data.rows[0].image_url);
+        }
+      })
+      .catch(error => {
+        console.error(`[Data Flow Test #2:] Player ${userID} is not in the DB`);
+        socket.emit('avatarReturn', "https://image.shutterstock.com/image-illustration/question-mark-point-red-glossy-260nw-583693069.jpg");
+      });
+    });
 
 });
 
