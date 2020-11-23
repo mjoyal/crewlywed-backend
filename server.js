@@ -102,15 +102,34 @@ io.on('connection', socket => {
 
     //3. getScore:
     socket.on('score', userID => {
-      db.query(`;`)
+      db.query(`SELECT ((
+        SELECT count(*)
+        FROM choices
+          JOIN players ON players.id = choices.chooser_id
+          JOIN submissions ON submissions.id = choices.submission_id
+          JOIN rounds ON submissions.round_id = rounds.id
+        WHERE players.id = ${userID}
+          AND submissions.submitter_id = rounds.victim_id
+    )*100) + ((
+        SELECT count(*)
+        FROM choices
+          JOIN submissions ON submissions.id = choices.submission_id
+          JOIN rounds ON rounds.id = submissions.round_id
+        WHERE submissions.submitter_id = ${userID}
+          AND rounds.victim_id != ${userID}
+    )*50)
+    AS total_score, username
+    FROM players
+    WHERE players.id = ${userID};`)
       .then(data => {
+        console.log(data);
         const scoreData = data.rows[0];
-        console.log(`[Data Flow Test #3:] Score sent for ${scoreData.username}: ${scoreData.score}`);
+        console.log(`[Data Flow Test #3:] Score sent for ${scoreData.username}: ${scoreData.total_score}`);
         socket.emit('scoreReturn', scoreData);
       })
       .catch(error => {
         console.error(`[Data Flow Test #2:] Player ${userID} is not in the DB`);
-        socket.emit('scoreReturn', {username: "This non-existent user", score: "unavailable"});
+        socket.emit('scoreReturn', {username: "This non-existent user", total_score: "unavailable"});
       });
     });
 

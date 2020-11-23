@@ -16,4 +16,6 @@ SELECT ((
     WHERE submissions.submitter_id = 8 --Placeholder.
       AND rounds.victim_id != 8 --Placeholder.
 )*50)
-AS total_score
+AS total_score, username
+FROM players
+WHERE players.id = 8 --Placeholder
