@@ -8,7 +8,7 @@ VALUES
 (5, 3),
 --Session 1 Round 3: What is mac's sage advice?
 (9, 1),
-(8, 2),
+(7, 2),
 --Session 2, Round 1: What does scooby want to be when they grow up?
 (10, 5),
 (10, 6),
