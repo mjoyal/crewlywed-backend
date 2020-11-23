@@ -3,7 +3,7 @@ const getAvatar = function(userID, db) {
   SELECT image_url
   FROM avatars
   JOIN players ON players.avatar_id = avatars.id
-  WHERE players.id = $1;`
+  WHERE players.id = $1;`;
   const params = userID;
   return db.query(query, [params])
 }

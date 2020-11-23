@@ -18,7 +18,7 @@ const getScore = function(userID, db) {
       )*50)
     AS total_score, username
     FROM players
-    WHERE players.id = $1;`
+    WHERE players.id = $1;`;
   const params = userID;
   return db.query(query, [params])
 }

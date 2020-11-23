@@ -13,15 +13,17 @@ const server     = require('http').createServer(app);
 
 // Helper functions:
 const {generateRoomCode} = require('./helpers');
-const { getScore } = require('./db/helpers/getScore')
-const { getAvatar } = require('./db/helpers/getAvatar')
+
+// Socket handlers:
+const {scoreSocket} = require('./socket_handlers/scoreSocket')
+const {avatarSocket} = require('./socket_handlers/avatarSocket')
+const {rowCountSocket} = require('./socket_handlers/rowCountSocket')
 
 // PG database client/connection setup:
 const { Pool } = require('pg');
 const dbParams = require('./lib/db.js');
 const db = new Pool(dbParams);
 db.connect();
-
 
 // See HTTP requests in terminal:
 app.use(morgan('dev'));
@@ -65,49 +67,9 @@ io.on('connection', socket => {
       console.log("Hello, ", arg.name);
     });
 
-    // 1. countRows:
-    socket.on('rowCount', table => {
-      db.query(`SELECT COUNT(*) FROM ${table};`)
-      .then(data => {
-        const rowCount = data.rows[0].count;
-        console.log(`[Data Flow Test #1:] # of rows in ${table} table: ${rowCount}`);
-        socket.emit('rowCountReturn', `${rowCount} rows`);
-      })
-      .catch(error => {
-        console.error(`[Data Flow Test #1:] "${table}" is not a valid table`);
-        socket.emit('rowCountReturn', `"${table}" is not a valid table.`);
-      });
-    });
-
-    // 2. getAvatar:
-    socket.on('avatar', userID => {
-      getAvatar(userID, db)
-      .then(data => {
-        if (data.rows[0].image_url) {
-          console.log(`[Data Flow Test #2:] Avatar sent for player ${userID}`);
-          socket.emit('avatarReturn', data.rows[0].image_url);
-        }
-      })
-      .catch(error => {
-        console.error(`[Data Flow Test #2:] Player ${userID} is not in the DB`);
-        socket.emit('avatarReturn', "https://image.shutterstock.com/image-illustration/question-mark-point-red-glossy-260nw-583693069.jpg");
-      });
-    });
-
-    // 3. getScore:
-    socket.on('score', userID => {
-      getScore(userID, db)
-      .then(data => {
-        console.log(data);
-        const scoreData = data.rows[0];
-        console.log(`[Data Flow Test #3:] Score sent for ${scoreData.username}: ${scoreData.total_score}`);
-        socket.emit('scoreReturn', scoreData);
-      })
-      .catch(error => {
-        console.error(`[Data Flow Test #2:] Player ${userID} is not in the DB`);
-        socket.emit('scoreReturn', {username: "This non-existent user", total_score: "unavailable"});
-      });
-    });
+    rowCountSocket(socket, db)
+    avatarSocket(socket, db);
+    scoreSocket(socket, db);
 
 });
 
