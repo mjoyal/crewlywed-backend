@@ -11,17 +11,10 @@ const app        = express();
 const morgan     = require('morgan');
 const server     = require('http').createServer(app);
 
-
-// generate random code
+// Helper functions:
 const {generateRoomCode} = require('./helpers');
-
-
-const io = require('socket.io')(server, {
-  cors: {
-    origin: '*',
-  }
-});
-
+const { getScore } = require('./db/helpers/getScore')
+const { getAvatar } = require('./db/helpers/getAvatar')
 
 // PG database client/connection setup:
 const { Pool } = require('pg');
@@ -33,13 +26,19 @@ db.connect();
 // See HTTP requests in terminal:
 app.use(morgan('dev'));
 
+// Set up socket server:
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  }
+});
 
-//Establish socket.io connection & listen for events:
+// Establish socket.io connection & listen for events:
 io.on('connection', socket => {
   console.log('user connected')
 
 
-  //EXAMPLE of getting data from DB and sending it as JSON object to client, upon connection:
+  // EXAMPLE of getting data from DB and sending it as JSON object to client, upon connection:
   db.query(`SELECT * FROM submissions;`)
     .then(data => {
       const submissions = data.rows;
@@ -47,7 +46,7 @@ io.on('connection', socket => {
     })
 
 
-    //CHAT ROOMS TEST:
+    // CHAT ROOMS TEST:
     socket.on("join room", (room) => {
       socket.join(room);
       console.log(`Room ${room} joined`)
@@ -59,14 +58,14 @@ io.on('connection', socket => {
     });
 
 
-    //DATA FLOW TESTS:
+    // DATA FLOW TESTS:
 
-    //0. Test basic data flow:
+    // 0. Test basic data flow:
     socket.on('hi', arg => {
       console.log("Hello, ", arg.name);
     });
 
-    //1. countRows:
+    // 1. countRows:
     socket.on('rowCount', table => {
       db.query(`SELECT COUNT(*) FROM ${table};`)
       .then(data => {
@@ -80,14 +79,9 @@ io.on('connection', socket => {
       });
     });
 
-    //2. getAvatar:
+    // 2. getAvatar:
     socket.on('avatar', userID => {
-      db.query(`
-      SELECT image_url
-      FROM avatars
-      JOIN players ON players.avatar_id = avatars.id
-      WHERE players.id = ${userID}
-      ;`)
+      getAvatar(userID, db)
       .then(data => {
         if (data.rows[0].image_url) {
           console.log(`[Data Flow Test #2:] Avatar sent for player ${userID}`);
@@ -100,27 +94,9 @@ io.on('connection', socket => {
       });
     });
 
-    //3. getScore:
+    // 3. getScore:
     socket.on('score', userID => {
-      db.query(`SELECT ((
-        SELECT count(*)
-        FROM choices
-          JOIN players ON players.id = choices.chooser_id
-          JOIN submissions ON submissions.id = choices.submission_id
-          JOIN rounds ON submissions.round_id = rounds.id
-        WHERE players.id = ${userID}
-          AND submissions.submitter_id = rounds.victim_id
-    )*100) + ((
-        SELECT count(*)
-        FROM choices
-          JOIN submissions ON submissions.id = choices.submission_id
-          JOIN rounds ON rounds.id = submissions.round_id
-        WHERE submissions.submitter_id = ${userID}
-          AND rounds.victim_id != ${userID}
-    )*50)
-    AS total_score, username
-    FROM players
-    WHERE players.id = ${userID};`)
+      getScore(userID, db)
       .then(data => {
         console.log(data);
         const scoreData = data.rows[0];
@@ -141,13 +117,7 @@ app.get('/', (req, res) => {
   res.send("Hello world");
 });
 
-
-// RESTful route below. NOTE: We are probably using sockets in lieu of RESTful routes. But I am keeping the below for now (which could be used as a template for routes for other resources) until that decision is final.
-const avatarsRoutes = require("./routes/avatars");
-const { Socket } = require('socket.io');
-app.use("/api/avatars", avatarsRoutes(db));
-
-
+// Have the server listen for requests on the indicated PORT:
 server.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
