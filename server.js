@@ -38,15 +38,16 @@ app.use(morgan('dev'));
 io.on('connection', socket => {
   console.log('user connected')
 
+
   //EXAMPLE of getting data from DB and sending it as JSON object to client, upon connection:
   db.query(`SELECT * FROM submissions;`)
     .then(data => {
       const submissions = data.rows;
-      io.emit('getSubmissions', submissions);
+      socket.emit('getSubmissions', submissions);
     })
 
-    // room code
 
+    //CHAT ROOMS TEST:
     socket.on("join room", (room) => {
       socket.join(room);
       io.to(room).emit('show code', room);
@@ -55,6 +56,31 @@ io.on('connection', socket => {
     socket.on('message', (messageData) => {
       io.to(messageData.room).emit('message', messageData);
     });
+
+
+    //DATA FLOW TESTS:
+
+    //0. Test basic data flow:
+    socket.on('hi', arg => {
+      console.log("Hello, ", arg.name);
+    });
+
+    //1. countRows:
+    socket.on('rowCount', table => {
+      db.query(`SELECT COUNT(*) FROM ${table};`)
+      .then(data => {
+        console.log(`Data Flow Test #1: Sending data for ${table} table.`);
+        const rowCount = data.rows[0].count;
+        socket.emit('rowCountReturn', rowCount);
+      })
+      .catch(error => {
+        console.error("Data Flow Test #1: This is not a valid table");
+        socket.emit('rowCountReturn', "This is not a valid table.");
+      });
+    });
+
+    //2. getScore:
+
 });
 
 
