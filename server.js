@@ -11,8 +11,8 @@ const app        = express();
 const morgan     = require('morgan');
 const server     = require('http').createServer(app);
 
-// generate random code
 
+// generate random code
 const {generateRoomCode} = require('./helpers');
 
 
@@ -34,14 +34,15 @@ db.connect();
 app.use(morgan('dev'));
 
 
-//Establish socket.io connection:
-io.on('connection', (socket) => {
+//Establish socket.io connection & listen for events:
+io.on('connection', socket => {
   console.log('user connected')
 
-  db.query(`SELECT * FROM avatars;`)
+  //EXAMPLE of getting data from DB and sending it as JSON object to client, upon connection:
+  db.query(`SELECT * FROM submissions;`)
     .then(data => {
-      const avatars = data.rows;
-      io.emit('avatar', avatars);
+      const submissions = data.rows;
+      io.emit('getSubmissions', submissions);
     })
 
     // room code
@@ -55,6 +56,7 @@ io.on('connection', (socket) => {
       io.to(messageData.room).emit('message', messageData);
     });
 });
+
 
 // Basic "Hello World" route to test this server is working:
 app.get('/', (req, res) => {
