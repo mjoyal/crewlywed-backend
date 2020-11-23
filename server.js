@@ -100,6 +100,20 @@ io.on('connection', socket => {
       });
     });
 
+    //3. getScore:
+    socket.on('score', userID => {
+      db.query(`;`)
+      .then(data => {
+        const scoreData = data.rows[0];
+        console.log(`[Data Flow Test #3:] Score sent for ${scoreData.username}: ${scoreData.score}`);
+        socket.emit('scoreReturn', scoreData);
+      })
+      .catch(error => {
+        console.error(`[Data Flow Test #2:] Player ${userID} is not in the DB`);
+        socket.emit('scoreReturn', {username: "This non-existent user", score: "unavailable"});
+      });
+    });
+
 });
 
 

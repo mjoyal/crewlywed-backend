@@ -1,12 +1,12 @@
 INSERT INTO submissions (submitter_id, round_id, text)
 VALUES
 --Session 1 Round 1: What is chantal's biggest fear?
-(1, 1, 'Monkeys'),
+(1, 1, 'Monkeys'),--correct
 (2, 1, 'spiders'),
 (3, 1, 'bears'),
 --Session 1 Round 2: What would will request for their death row meal?
 (1, 2, 'chili'),
-(2, 2, 'bacon'),
+(2, 2, 'bacon'),--
 (3, 2, 'chocolate cake'),
 --Session 1 Round 3: What is mac's sage advice?
 (1, 3, 'a bird in the hand is worth 2 in the bush'),
