@@ -50,10 +50,11 @@ io.on('connection', socket => {
     //CHAT ROOMS TEST:
     socket.on("join room", (room) => {
       socket.join(room);
-      io.to(room).emit('show code', room);
+      console.log(`Room ${room} joined`)
     });
 
     socket.on('message', (messageData) => {
+      console.log(`${messageData.name} sent ${messageData.message} to ${messageData.room}`)
       io.to(messageData.room).emit('message', messageData);
     });
 
@@ -69,13 +70,13 @@ io.on('connection', socket => {
     socket.on('rowCount', table => {
       db.query(`SELECT COUNT(*) FROM ${table};`)
       .then(data => {
-        console.log(`Data Flow Test #1: Sending data for ${table} table.`);
         const rowCount = data.rows[0].count;
-        socket.emit('rowCountReturn', rowCount);
+        console.log(`[Data Flow Test #1:] # of rows in ${table} table: ${rowCount}`);
+        socket.emit('rowCountReturn', `${rowCount} rows`);
       })
       .catch(error => {
-        console.error("Data Flow Test #1: This is not a valid table");
-        socket.emit('rowCountReturn', "This is not a valid table.");
+        console.error(`[Data Flow Test #1:] "${table}" is not a valid table`);
+        socket.emit('rowCountReturn', `"${table}" is not a valid table.`);
       });
     });
 
