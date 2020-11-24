@@ -11,9 +11,6 @@ const app        = express();
 const morgan     = require('morgan');
 const server     = require('http').createServer(app);
 
-// Helper functions:
-const {generateRoomCode} = require('./helpers');
-
 // Socket handlers:
 const {scoreSocket} = require('./socket_handlers/scoreSocket');
 const {avatarSocket} = require('./socket_handlers/avatarSocket');
