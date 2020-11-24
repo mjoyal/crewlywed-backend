@@ -15,9 +15,9 @@ const server     = require('http').createServer(app);
 const {generateRoomCode} = require('./helpers');
 
 // Socket handlers:
-const {scoreSocket} = require('./socket_handlers/scoreSocket')
-const {avatarSocket} = require('./socket_handlers/avatarSocket')
-const {rowCountSocket} = require('./socket_handlers/rowCountSocket')
+const {scoreSocket} = require('./socket_handlers/scoreSocket');
+const {avatarSocket} = require('./socket_handlers/avatarSocket');
+const {rowCountSocket} = require('./socket_handlers/rowCountSocket');
 
 // PG database client/connection setup:
 const { Pool } = require('pg');
@@ -37,7 +37,7 @@ const io = require('socket.io')(server, {
 
 // Establish socket.io connection & listen for events:
 io.on('connection', socket => {
-  console.log('user connected to the socket')
+  console.log('user connected to the socket');
   socket.emit('connectMessage','you are connected to the socket!');
 
     // CHAT ROOMS TEST:
@@ -52,7 +52,7 @@ io.on('connection', socket => {
     });
 
     // DATA FLOW TESTS:
-    rowCountSocket(socket, db)
+    rowCountSocket(socket, db);
     avatarSocket(socket, db);
     scoreSocket(socket, db);
 
