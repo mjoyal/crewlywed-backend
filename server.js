@@ -17,7 +17,6 @@ const {generateRoomCode} = require('./helpers');
 // Socket handlers:
 const {scoreSocket} = require('./socket_handlers/scoreSocket');
 const {avatarSocket} = require('./socket_handlers/avatarSocket');
-const {rowCountSocket} = require('./socket_handlers/rowCountSocket');
 
 // PG database client/connection setup:
 const { Pool } = require('pg');
@@ -51,9 +50,12 @@ io.on('connection', socket => {
       io.to(messageData.room).emit('message', messageData);
     });
 
-    // DATA FLOW TESTS:
-    rowCountSocket(socket, db);
+    // DATA FLOW:
+
+    // Listen for "getAvatar" event from FE; respond w/ current score for playerID that was passed over:
     avatarSocket(socket, db);
+
+    // Listen for "getScore" event from FE; respond w/ current score for playerID that was passed over:
     scoreSocket(socket, db);
 
 });

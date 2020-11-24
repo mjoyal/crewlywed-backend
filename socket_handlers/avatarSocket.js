@@ -1,7 +1,7 @@
 const { getAvatar } = require('../db/helpers/getAvatar')
 
 const avatarSocket = (socket, db) => {
-  socket.on('avatar', userID => {
+  socket.on('getAvatar', userID => {
     getAvatar(userID, db)
     .then(data => {
       if (data.rows[0].image_url) {

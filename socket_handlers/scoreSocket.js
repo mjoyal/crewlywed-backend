@@ -1,7 +1,7 @@
 const { getScore } = require('../db/helpers/getScore')
 
 const scoreSocket = (socket, db) => {
-  socket.on('score', userID => {
+  socket.on('getScore', userID => {
     getScore(userID, db)
     .then(data => {
       const scoreData = data.rows[0];
