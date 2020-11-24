@@ -37,16 +37,8 @@ const io = require('socket.io')(server, {
 
 // Establish socket.io connection & listen for events:
 io.on('connection', socket => {
-  console.log('user connected')
-
-
-  // EXAMPLE of getting data from DB and sending it as JSON object to client, upon connection:
-  db.query(`SELECT * FROM submissions;`)
-    .then(data => {
-      const submissions = data.rows;
-      socket.emit('getSubmissions', submissions);
-    })
-
+  console.log('user connected to the socket')
+  socket.emit('connectMessage','you are connected to the socket!');
 
     // CHAT ROOMS TEST:
     socket.on("join room", (room) => {
@@ -59,14 +51,7 @@ io.on('connection', socket => {
       io.to(messageData.room).emit('message', messageData);
     });
 
-
     // DATA FLOW TESTS:
-
-    // 0. Test basic data flow:
-    socket.on('hi', arg => {
-      console.log("Hello, ", arg.name);
-    });
-
     rowCountSocket(socket, db)
     avatarSocket(socket, db);
     scoreSocket(socket, db);
