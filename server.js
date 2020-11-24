@@ -14,7 +14,7 @@ const server     = require('http').createServer(app);
 // Socket handlers:
 const {getScoreSocket} = require('./socket_handlers/getScoreSocket');
 const {getAvatarSocket} = require('./socket_handlers/getAvatarSocket');
-const {createGameSocket} = require('./socket_handlers/createGameSocket');
+const {createNewGameSocket} = require('./socket_handlers/createNewGameSocket');
 
 // PG database client/connection setup:
 const { Pool } = require('pg');
@@ -57,7 +57,7 @@ io.on('connection', socket => {
     getScoreSocket(socket, db);
 
     // Listen for "createGame event from FE"
-    createGameSocket(socket, db);
+    createNewGameSocket(socket, db);
 
 });
 
