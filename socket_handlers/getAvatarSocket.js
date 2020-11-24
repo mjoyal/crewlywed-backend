@@ -1,4 +1,4 @@
-const { getAvatar } = require('../db/helpers/getAvatar')
+const { getAvatar } = require('../db/helpers/getAvatar');
 
 const getAvatarSocket = (socket, db) => {
   socket.on('getAvatar', userID => {
