@@ -15,9 +15,8 @@ const server     = require('http').createServer(app);
 const {generateRoomCode} = require('./helpers');
 
 // Socket handlers:
-const {scoreSocket} = require('./socket_handlers/scoreSocket')
-const {avatarSocket} = require('./socket_handlers/avatarSocket')
-const {rowCountSocket} = require('./socket_handlers/rowCountSocket')
+const {scoreSocket} = require('./socket_handlers/scoreSocket');
+const {avatarSocket} = require('./socket_handlers/avatarSocket');
 
 // PG database client/connection setup:
 const { Pool } = require('pg');
@@ -37,16 +36,8 @@ const io = require('socket.io')(server, {
 
 // Establish socket.io connection & listen for events:
 io.on('connection', socket => {
-  console.log('user connected')
-
-
-  // EXAMPLE of getting data from DB and sending it as JSON object to client, upon connection:
-  db.query(`SELECT * FROM submissions;`)
-    .then(data => {
-      const submissions = data.rows;
-      socket.emit('getSubmissions', submissions);
-    })
-
+  console.log('user connected to the socket');
+  socket.emit('connectMessage','you are connected to the socket!');
 
     // CHAT ROOMS TEST:
     socket.on("join room", (room) => {
@@ -59,16 +50,12 @@ io.on('connection', socket => {
       io.to(messageData.room).emit('message', messageData);
     });
 
+    // DATA FLOW:
 
-    // DATA FLOW TESTS:
-
-    // 0. Test basic data flow:
-    socket.on('hi', arg => {
-      console.log("Hello, ", arg.name);
-    });
-
-    rowCountSocket(socket, db)
+    // Listen for "getAvatar" event from FE; respond w/ current score for playerID that was passed over:
     avatarSocket(socket, db);
+
+    // Listen for "getScore" event from FE; respond w/ current score for playerID that was passed over:
     scoreSocket(socket, db);
 
 });
