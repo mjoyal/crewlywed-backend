@@ -1,6 +1,6 @@
 const { getScore } = require('../db/helpers/getScore')
 
-const scoreSocket = (socket, db) => {
+const getScoreSocket = (socket, db) => {
   socket.on('getScore', userID => {
     getScore(userID, db)
     .then(data => {
@@ -15,4 +15,4 @@ const scoreSocket = (socket, db) => {
   });
 }
 
-module.exports = { scoreSocket };
+module.exports = { getScoreSocket };
