@@ -15,6 +15,7 @@ const server     = require('http').createServer(app);
 const {getScoreSocket} = require('./socket_handlers/getScoreSocket');
 const {getAvatarSocket} = require('./socket_handlers/getAvatarSocket');
 const {createNewGameSocket} = require('./socket_handlers/createNewGameSocket');
+const {joinGameSocket} = require('./socket_handlers/joinGameSocket');
 
 // PG database client/connection setup:
 const { Pool } = require('pg');
@@ -32,8 +33,10 @@ const io = require('socket.io')(server, {
   }
 });
 
-// Establish socket.io connection & listen for events:
+// Establish socket.io connection & handle incoming events:
 io.on('connection', socket => {
+
+  //Confirm socket connection:
   console.log('user connected to the socket');
   socket.emit('connectMessage','you are connected to the socket!');
 
@@ -48,16 +51,11 @@ io.on('connection', socket => {
       io.to(messageData.room).emit('message', messageData);
     });
 
-    // DATA FLOW:
-
-    // Listen for "getAvatar" event from FE:
+    // Socket event handlers:
     getAvatarSocket(socket, db);
-
-    // Listen for "getScore" event from FE:
     getScoreSocket(socket, db);
-
-    // Listen for "createGame event from FE"
     createNewGameSocket(socket, db);
+    joinGameSocket(socket, db);
 
 });
 
