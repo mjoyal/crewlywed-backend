@@ -34,6 +34,27 @@ const getAvatarsNotInUse = function(sessionID, db) {
   return db.query(query, params)
 };
 
+const checkIfDuplicateName = function(createNewPlayerData, db) {
+  const query = `
+    SELECT id
+    FROM players
+    WHERE username = $1
+      AND session_id = $2
+  ;`;
+  const params = [createNewPlayerData.username, createNewPlayerData.session_id];
+  return db.query(query, params)
+};
+
+const createNewPlayer = function(createNewPlayerData, db) {
+  const query = `
+  INSERT INTO players (username, creator, session_id, avatar_id)
+  VALUES ($1, $2, $3, $4)
+  RETURNING id
+  ;`;
+  const params = [createNewPlayerData.username, createNewPlayerData.creator, createNewPlayerData.session_id, createNewPlayerData.avatar_id];
+  return db.query(query, params)
+};
+
 
 const joinGame = function(joinGameData, db) {
   // const query = `
@@ -43,4 +64,4 @@ const joinGame = function(joinGameData, db) {
   // return db.query(query, params)
 };
 
-module.exports = { checkIfGameIsLive, checkIfGameIsFull, joinGame, getAvatarsNotInUse };
+module.exports = { checkIfGameIsLive, checkIfGameIsFull, getAvatarsNotInUse, checkIfDuplicateName, createNewPlayer, joinGame };

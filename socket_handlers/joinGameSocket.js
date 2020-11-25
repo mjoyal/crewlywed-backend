@@ -1,4 +1,4 @@
-const { checkIfGameIsLive, checkIfGameIsFull, joinGame, getAvatarsNotInUse } = require('../db/helpers/joinGame');
+const { checkIfGameIsLive, checkIfGameIsFull, getAvatarsNotInUse, checkIfDuplicateName, createNewPlayer, joinGame } = require('../db/helpers/joinGame');
 
 const joinGameSocket = (socket, db) => {
   socket.on('joinGame', joinGameData => {
@@ -15,13 +15,13 @@ const joinGameSocket = (socket, db) => {
             console.log("Success! Game exists, is live, and is not full")
             socket.emit('joinGameReturn', sessionID)
           } else {
-            console.log("This game is full")
+            console.log("Error! This game is full")
             socket.emit('joinGameErrorFull', 'sorry, this game is full!')
           }
         })
         .catch(e => console.error(e.stack))
       } else {
-        console.log("This is not a currently-active game")
+        console.log("Error! This is not a currently-active game")
         socket.emit('joinGameErrorInvalid', 'sorry, this is an invalid game code!')
       }
     })
@@ -36,11 +36,33 @@ const joinGameSocket = (socket, db) => {
         avatars,
         gameID
       }
-      console.log("Avatars Data sent:", data.rows);
       socket.emit('getAvatarsNotInUseReturn', avatarsResponseData);
     })
     .catch(e => console.error(e.stack))
+  });
+
+  socket.on('createNewPlayer', createNewPlayerData => {
+    checkIfDuplicateName(createNewPlayerData, db)
+    .then(data => {
+      if (data.rows[0]) {
+        console.log("Error! Duplicate name.");
+        socket.emit('createNewPlayerError', 'sorry, this name is taken!')
+      } else {
+        console.log("Success! Name is unique.")
+        createNewPlayer(createNewPlayerData, db)
+        .then(data => {
+          const playerID = data.rows[0].id;
+          console.log(`New player #${playerID} created`);
+          socket.emit('createNewPlayerReturn', '')
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      }
+    })
+    .catch(e => console.error(e.stack))
   })
+
 };
 
 module.exports = { joinGameSocket };
