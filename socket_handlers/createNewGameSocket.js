@@ -6,7 +6,7 @@ const createNewGameSocket = (socket, db) => {
     .then(data => {
       const gameID = data.rows[0].id;
       console.log(`New game #${gameID} created`);
-      socket.emit('createNewGameReturn', gameID)
+      socket.emit('createNewGameReturn', gameID);
     })
     .catch(error => {
       console.log(error);

@@ -13,13 +13,16 @@ const joinGameSocket = (socket, db) => {
           numPlayers = data.rows[0].count;
           if (numPlayers < 8) {
             console.log("Success! Game exists, is live, and is not full")
+            socket.emit('joinGameReturn')
           } else {
             console.log("This game is full")
+            socket.emit('joinGameErrorFull', 'sorry, this game is full!')
           }
         })
         .catch(e => console.error(e.stack))
       } else {
-        console.log("This is not a currently-active game");
+        console.log("This is not a currently-active game")
+        socket.emit('joinGameErrorInvalid', 'sorry, this is an invalid game code!')
       }
     })
     .catch(e => console.error(e.stack))
