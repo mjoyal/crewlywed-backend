@@ -16,6 +16,7 @@ const {getScoreSocket} = require('./socket_handlers/getScoreSocket');
 const {getAvatarSocket} = require('./socket_handlers/getAvatarSocket');
 const {createNewGameSocket} = require('./socket_handlers/createNewGameSocket');
 const {joinGameSocket} = require('./socket_handlers/joinGameSocket');
+const {chatSocket} = require('./socket_handlers/chatSocket');
 
 // PG database client/connection setup:
 const { Pool } = require('pg');
@@ -40,20 +41,13 @@ io.on('connection', socket => {
   console.log('user connected to the socket');
   socket.emit('connectMessage','you are connected to the socket!');
 
-    // CHAT ROOMS TEST:
-    socket.on("join room", (room) => {
-      socket.join(room);
-      console.log(`Room ${room} joined`)
-    });
-
-    socket.on('message', (messageData) => {
-      console.log(`${messageData.name} sent ${messageData.message} to ${messageData.room}`)
-      io.to(messageData.room).emit('message', messageData);
-    });
-
     // Socket event handlers:
+    //TRIAL:
+    chatSocket(socket, io, db);
     getAvatarSocket(socket, db);
     getScoreSocket(socket, db);
+
+    //APP:
     createNewGameSocket(socket, db);
     joinGameSocket(socket, db);
 
