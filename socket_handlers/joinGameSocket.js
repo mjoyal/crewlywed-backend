@@ -31,8 +31,13 @@ const joinGameSocket = (socket, db) => {
   socket.on('getAvatarsNotInUse', gameID => {
     getAvatarsNotInUse(gameID, db)
     .then(data => {
-      console.log(data.rows);
-      socket.emit('getAvatarsNotInUseReturn',data.rows);
+      avatars = data.rows,
+      avatarsResponseData = {
+        avatars,
+        gameID
+      }
+      console.log("Avatars Data sent:", data.rows);
+      socket.emit('getAvatarsNotInUseReturn', avatarsResponseData);
     })
     .catch(e => console.error(e.stack))
   })
