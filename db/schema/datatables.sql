@@ -19,7 +19,6 @@ CREATE TABLE sessions (
 
 CREATE TABLE avatars (
   id SERIAL PRIMARY KEY,
-  image_url VARCHAR(255),
   color VARCHAR(50)
 );
 
