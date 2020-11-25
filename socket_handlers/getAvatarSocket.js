@@ -1,6 +1,6 @@
-const { getAvatar } = require('../db/helpers/getAvatar')
+const { getAvatar } = require('../db/helpers/getAvatar');
 
-const avatarSocket = (socket, db) => {
+const getAvatarSocket = (socket, db) => {
   socket.on('getAvatar', userID => {
     getAvatar(userID, db)
     .then(data => {
@@ -16,4 +16,4 @@ const avatarSocket = (socket, db) => {
   });
 }
 
-module.exports = { avatarSocket };
+module.exports = { getAvatarSocket };

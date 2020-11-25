@@ -11,12 +11,10 @@ const app        = express();
 const morgan     = require('morgan');
 const server     = require('http').createServer(app);
 
-// Helper functions:
-const {generateRoomCode} = require('./helpers');
-
 // Socket handlers:
-const {scoreSocket} = require('./socket_handlers/scoreSocket');
-const {avatarSocket} = require('./socket_handlers/avatarSocket');
+const {getScoreSocket} = require('./socket_handlers/getScoreSocket');
+const {getAvatarSocket} = require('./socket_handlers/getAvatarSocket');
+const {createNewGameSocket} = require('./socket_handlers/createNewGameSocket');
 
 // PG database client/connection setup:
 const { Pool } = require('pg');
@@ -52,11 +50,14 @@ io.on('connection', socket => {
 
     // DATA FLOW:
 
-    // Listen for "getAvatar" event from FE; respond w/ current score for playerID that was passed over:
-    avatarSocket(socket, db);
+    // Listen for "getAvatar" event from FE:
+    getAvatarSocket(socket, db);
 
-    // Listen for "getScore" event from FE; respond w/ current score for playerID that was passed over:
-    scoreSocket(socket, db);
+    // Listen for "getScore" event from FE:
+    getScoreSocket(socket, db);
+
+    // Listen for "createGame event from FE"
+    createNewGameSocket(socket, db);
 
 });
 
