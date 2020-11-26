@@ -1,8 +1,9 @@
-const { checkIfGameIsLive, checkIfGameIsFull, getAvatarsNotInUse, checkIfDuplicateName, createNewPlayer, joinGame } = require('../db/helpers/joinGame');
+const { checkIfGameHasStarted, checkIfGameIsFull, getAvatarsNotInUse, createNewPlayer, joinGame } = require('../db/helpers/joinGame');
 
 const joinGameSocket = (socket, db) => {
+  // Listen for name and game code sent from front end:
   socket.on('joinGame', joinGameData => {
-    checkIfGameIsLive(joinGameData, db)
+    checkIfGameHasStarted(joinGameData, db)
     .then(data => {
       if (data.rows[0]) {
         // console.log("Session ID:", data.rows[0])
@@ -28,6 +29,7 @@ const joinGameSocket = (socket, db) => {
     .catch(e => console.error(e.stack))
   });
 
+  // Listen for request from front end for which avatars the new player can use:
   socket.on('getAvatarsNotInUse', gameID => {
     getAvatarsNotInUse(gameID, db)
     .then(data => {
@@ -41,27 +43,18 @@ const joinGameSocket = (socket, db) => {
     .catch(e => console.error(e.stack))
   });
 
+  // Listen for request from front end to create a new player:
   socket.on('createNewPlayer', createNewPlayerData => {
-    checkIfDuplicateName(createNewPlayerData, db)
+    createNewPlayer(createNewPlayerData, db)
     .then(data => {
-      if (data.rows[0]) {
-        console.log("Error! Duplicate name.");
-        socket.emit('createNewPlayerError', 'sorry, this name is taken!')
-      } else {
-        console.log("Success! Name is unique.")
-        createNewPlayer(createNewPlayerData, db)
-        .then(data => {
-          const playerID = data.rows[0].id;
-          console.log(`New player #${playerID} created`);
-          socket.emit('createNewPlayerReturn', '')
-        })
-        .catch(error => {
-          console.log(error);
-        });
-      }
+      const playerID = data.rows[0].id;
+      console.log(`New player #${playerID} created`);
+      socket.emit('createNewPlayerReturn', '')
     })
-    .catch(e => console.error(e.stack))
-  })
+    .catch(error => {
+      console.log(error);
+    });
+  });
 
 };
 
