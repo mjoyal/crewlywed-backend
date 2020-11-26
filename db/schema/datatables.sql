@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS choices CASCADE;
 CREATE TABLE sessions (
   id SERIAL PRIMARY KEY,
   created_at TIMESTAMP,
+  started_at TIMESTAMP,
   finished_at TIMESTAMP,
   code VARCHAR(50) NOT NULL,
   rounds_per_player SMALLINT NOT NULL
@@ -19,7 +20,6 @@ CREATE TABLE sessions (
 
 CREATE TABLE avatars (
   id SERIAL PRIMARY KEY,
-  image_url VARCHAR(255),
   color VARCHAR(50)
 );
 
