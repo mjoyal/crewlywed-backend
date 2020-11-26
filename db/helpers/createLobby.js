@@ -9,7 +9,7 @@ const getGameCode = function(gameID, db) {
 
 const getPlayers = function(gameID, db) {
   const query = `
-  SELECT id, username, avatar_id
+  SELECT id, username, avatar_id, creator, session_id
   FROM players
   WHERE session_id = $1;`;
   const params = gameID;
