@@ -1,6 +1,8 @@
 
-const { getPlayers } = require('../db/helpers/getPlayers');
+
 const { getGameCode } = require('../db/helpers/getGameCode');
+const { getPlayers } = require('../db/helpers/getPlayers');
+
 
 const lobbySocket = (socket, db) => {
   socket.on('createHostLobby', (gameID) => {
