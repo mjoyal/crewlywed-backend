@@ -1,3 +1,4 @@
+const { returnPlayerData } = require('../db/helpers/createNewGame');
 const { checkIfGameHasStarted, checkIfGameIsFull, getAvatarsNotInUse, createNewPlayer, joinGame } = require('../db/helpers/joinGame');
 
 const joinGameSocket = (socket, db) => {
@@ -48,8 +49,12 @@ const joinGameSocket = (socket, db) => {
     createNewPlayer(createNewPlayerData, db)
     .then(data => {
       const playerID = data.rows[0].id;
+      returnPlayerData(playerID, db)
+      .then(data => {
+        const playerData = data.rows[0];
+        socket.emit('createNewPlayerReturn', playerData)
+      })
       console.log(`New player #${playerID} created`);
-      socket.emit('createNewPlayerReturn', '')
     })
     .catch(error => {
       console.log(error);
