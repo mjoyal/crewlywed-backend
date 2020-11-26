@@ -1,9 +1,9 @@
-const { checkIfGameIsLive, checkIfGameIsFull, getAvatarsNotInUse, createNewPlayer, joinGame } = require('../db/helpers/joinGame');
+const { checkIfGameHasStarted, checkIfGameIsFull, getAvatarsNotInUse, createNewPlayer, joinGame } = require('../db/helpers/joinGame');
 
 const joinGameSocket = (socket, db) => {
   // Listen for name and game code sent from front end:
   socket.on('joinGame', joinGameData => {
-    checkIfGameIsLive(joinGameData, db)
+    checkIfGameHasStarted(joinGameData, db)
     .then(data => {
       if (data.rows[0]) {
         // console.log("Session ID:", data.rows[0])

@@ -1,9 +1,9 @@
-const checkIfGameIsLive = function (joinGameData, db) {
+const checkIfGameHasStarted = function (joinGameData, db) {
   const query = `
     SELECT id
     FROM sessions
     WHERE code = $1
-    AND finished_at IS NULL
+    AND started_at IS NULL
   ;`;
   const params = [joinGameData.gameCode];
   return db.query(query, params)
@@ -53,4 +53,4 @@ const joinGame = function(joinGameData, db) {
   // return db.query(query, params)
 };
 
-module.exports = { checkIfGameIsLive, checkIfGameIsFull, getAvatarsNotInUse, createNewPlayer, joinGame };
+module.exports = { checkIfGameHasStarted, checkIfGameIsFull, getAvatarsNotInUse, createNewPlayer, joinGame };
