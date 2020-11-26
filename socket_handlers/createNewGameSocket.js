@@ -1,5 +1,6 @@
 const { createNewGame, createNewHost } = require('../db/helpers/createNewGame');
 
+
 const createNewGameSocket = (socket, db) => {
   socket.on('createNewGame', createNewGameData => {
     createNewGame(createNewGameData, db)
