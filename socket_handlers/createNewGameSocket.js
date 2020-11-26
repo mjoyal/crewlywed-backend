@@ -1,4 +1,4 @@
-const { createNewGame, createNewHost } = require('../db/helpers/createNewGame');
+const { createNewGame, createNewHost, returnPlayerData } = require('../db/helpers/createNewGame');
 
 
 const createNewGameSocket = (socket, db) => {
@@ -8,8 +8,6 @@ const createNewGameSocket = (socket, db) => {
       const gameID = data.rows[0].id;
       console.log(`New game #${gameID} created`);
       socket.emit('createNewGameReturn', gameID);
-      //send game code:
-      socket.emit('gameCodeReturn',createNewGameData.gameCode)
     })
     .catch(error => {
       console.log(error);
@@ -20,9 +18,12 @@ const createNewGameSocket = (socket, db) => {
     createNewHost(createNewHostData, db)
     .then(data => {
       const hostID = data.rows[0].id;
-      createNewHostData.id = hostID;
+      returnPlayerData(hostID, db)
+      .then(data => {
+        const hostData = data.rows[0];
+        socket.emit('createNewHostReturn', hostData);
+      })
       console.log(`New host #${hostID} created`);
-      socket.emit('createNewHostReturn', createNewHostData);
     })
     .catch(error => {
       console.log(error);

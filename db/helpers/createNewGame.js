@@ -18,4 +18,22 @@ const createNewHost = function(createNewHostData, db) {
   return db.query(query, params)
 };
 
-module.exports = { createNewGame, createNewHost };
+const returnPlayerData = function(hostID, db) {
+  const query = `
+    SELECT
+      players.id AS id,
+      players.session_id AS session_id,
+      players.avatar_id AS avatar_id,
+      players.username AS username,
+      players.creator AS creator,
+      sessions.code AS code
+    FROM players
+      JOIN sessions ON players.session_id = sessions.id
+    WHERE players.id = $1
+  ;`;
+  const params = [hostID];
+  return db.query(query, params)
+
+};
+
+module.exports = { createNewGame, createNewHost, returnPlayerData };
