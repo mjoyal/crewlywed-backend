@@ -48,8 +48,9 @@ const joinGameSocket = (socket, db) => {
     createNewPlayer(createNewPlayerData, db)
     .then(data => {
       const playerID = data.rows[0].id;
+      createNewPlayerData.id = playerID;
       console.log(`New player #${playerID} created`);
-      socket.emit('createNewPlayerReturn', '')
+      socket.emit('createNewPlayerReturn', createNewPlayerData)
     })
     .catch(error => {
       console.log(error);

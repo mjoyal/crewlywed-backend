@@ -18,7 +18,7 @@ const createNewGameSocket = (socket, db) => {
     createNewHost(createNewHostData, db)
     .then(data => {
       const hostID = data.rows[0].id;
-      createNewHostData.hostID = hostID;
+      createNewHostData.id = hostID;
       console.log(`New host #${hostID} created`);
       socket.emit('createNewHostReturn', createNewHostData);
     })
