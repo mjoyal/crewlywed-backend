@@ -51,7 +51,7 @@ io.on('connection', socket => {
     //APP:
     createNewGameSocket(socket, db);
     joinGameSocket(socket, db);
-    createLobbySocket(socket, db);
+    createLobbySocket(socket, db, io);
 });
 
 

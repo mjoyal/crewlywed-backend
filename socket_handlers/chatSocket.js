@@ -7,6 +7,7 @@ const chatSocket = (socket, io, db) => {
   socket.on('message', (messageData) => {
     console.log(`${messageData.name} sent ${messageData.message} to ${messageData.room}`)
     io.to(messageData.room).emit('message', messageData);
+    io.in('game').emit
   });
 };
 
