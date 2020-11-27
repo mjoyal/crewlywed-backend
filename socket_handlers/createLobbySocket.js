@@ -18,6 +18,10 @@ const createLobbySocket = (socket, db, io) => {
     })
   });
 
+  socket.on('startGame', (data) => {
+    io.in(data).emit('startGame');
+  });
+
 };
 
 module.exports = { createLobbySocket };
