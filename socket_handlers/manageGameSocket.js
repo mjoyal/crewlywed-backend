@@ -1,4 +1,4 @@
-const { updateStartedAt, updateFinishedAt, createRounds } = require('../db/helpers/manageGame');
+const { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, createRoundsRows, insertRoundsRows } = require('../db/helpers/manageGame');
 
 const manageGameSocket = (socket, db, io) => {
 
@@ -15,10 +15,27 @@ const manageGameSocket = (socket, db, io) => {
     });
 
     // Create rows for the session in the rounds table:
-    createRounds(gameRoom, db)
-    // .then(data => {
-    //   console.log(data);
-    // });
+    getPlayerIDs(gameID, db)
+      .then(data => {
+        playerIDs = data.rows;
+      getNumRoundsPerPlayer(gameID, db)
+        .then(data => {
+          numRounds = data.rows[0].rounds_per_player;
+          numQuestions = (playerIDs.length * numRounds);
+          getQuestionIDs(numQuestions, db)
+            .then(data => {
+              questionIDs = data.rows;
+              console.log('QuestionIDs:', questionIDs)
+              // createRoundsRows(playerIDs, questionIDs, db)
+              //   .then(data => {
+              //     const roundsRows = data.rows;
+              //   })
+            })
+        })
+    })
+
+
+
 
     // setTimeout to transition to end of game (this is a placeholder for now; will be updated later):
     setTimeout(() => {

@@ -58,9 +58,20 @@ const getQuestionIDs = function(num, db) {
   return db.query(query, [params])
 };
 
-// Insert rounds for the game
-const createRounds = function(gameID, db) {
-
+// Create rounds rows for game:
+const createRoundsRows = function(playerIDs, questionIDs, db) {
+  // const query = `
+  // ;`;
+  // const params;
+  // return db.query(query, [params])
 };
 
-module.exports = { updateStartedAt, updateFinishedAt, createRounds };
+// Insert rounds rows for game:
+const insertRoundsRows = function(roundRows, db) {
+  // const query = `
+  // ;`;
+  // const params;
+  // return db.query(query, [params])
+};
+
+module.exports = { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, createRoundsRows, insertRoundsRows };
