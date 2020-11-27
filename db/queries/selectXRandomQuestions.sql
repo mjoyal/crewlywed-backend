@@ -1,0 +1,4 @@
+SELECT id
+FROM questions
+ORDER BY RANDOM()
+LIMIT 10
