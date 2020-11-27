@@ -1,8 +1,10 @@
-const { createNewGame, createNewHost, returnPlayerData } = require('../db/helpers/createNewGame');
+const { checkIfNameIsPresent, createNewGame, createNewHost, returnPlayerData } = require('../db/helpers/createNewGame');
 
 
 const createNewGameSocket = (socket, db) => {
   socket.on('createNewGame', createNewGameData => {
+    if (checkIfNameIsPresent(createNewGameData)) {
+    console.log(createNewGameData)
     createNewGame(createNewGameData, db)
     .then(data => {
       const gameID = data.rows[0].id;
@@ -12,6 +14,10 @@ const createNewGameSocket = (socket, db) => {
     .catch(error => {
       console.log(error);
     });
+  } else {
+    console.log("Error! Blank name")
+    socket.emit('createGameErrorBlankName', 'please enter a name!')
+  }
   });
 
   socket.on('createNewHost', createNewHostData => {
