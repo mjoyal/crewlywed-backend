@@ -1,6 +1,7 @@
 
 const manageRoundSocket = (socket, db, io) => {
 
+  // manage roundStates
 socket.on('startGame', (hostInfo) => {
   const gameRoom = hostInfo.code;
   // during this timer, we show the 'ANSWER' page
@@ -30,6 +31,15 @@ socket.on('startGame', (hostInfo) => {
 
   });
 
+  // receive user answers
+  socket.on('thisUserSubmitted', userAnswerInfo => {
+    console.log(userAnswerInfo.answer);
+  });
+
+
+
 };
+
+
 
 module.exports = { manageRoundSocket };
