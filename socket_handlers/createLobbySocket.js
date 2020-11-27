@@ -18,8 +18,13 @@ const createLobbySocket = (socket, db, io) => {
     })
   });
 
-  socket.on('startGame', (data) => {
-    io.in(data).emit('startGame');
+  socket.on('startGame', (gameRoom) => {
+    io.in(gameRoom).emit('startGame');
+
+    setTimeout(() => {
+      io.in(gameRoom).emit('finalScore');
+    }, 3000)
+
   });
 
 };
