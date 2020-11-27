@@ -26,7 +26,10 @@ const manageGameSocket = (socket, db, io) => {
             .then(data => {
               questionIDs = data.rows;
               console.log('QuestionIDs:', questionIDs)
-              // createRoundsRows(playerIDs, questionIDs, db)
+              console.log('playerIDs:', playerIDs)
+              console.log('numRounds:', numRounds)
+              const roundsRows = createRoundsRows(playerIDs, questionIDs, numRounds, db);
+              console.log('roundsRows:', roundsRows)
               //   .then(data => {
               //     const roundsRows = data.rows;
               //   })

@@ -59,12 +59,36 @@ const getQuestionIDs = function(num, db) {
 };
 
 // Create rounds rows for game:
-const createRoundsRows = function(playerIDs, questionIDs, db) {
-  // const query = `
-  // ;`;
-  // const params;
-  // return db.query(query, [params])
+const createRoundsRows = function(playerIDs, questionIDs, numRounds, db) {
+  const roundsRows = [];
+  // Add victim_id's:
+  for (let i = 0; i < numRounds; i++) {
+    for (const player of playerIDs) {
+      roundsRows.push({victim_id: player.id})
+    }
+  }
+  // Add question_id's:
+  for (let i = 0; i < questionIDs.length; i++) {
+    roundsRows[i].question_id = questionIDs[i].id;
+  }
+  return roundsRows
 };
+
+
+
+
+  // const roundsRows = [
+  //   {question_id: 1, victim_id: 1},
+  //   {question_id: 2, victim_id: 2},
+  //   {question_id: 3, victim_id: 3},
+  //   {question_id: 4, victim_id: 1},
+  //   {question_id: 5, victim_id: 2},
+  //   {question_id: 6, victim_id: 3},
+  // ];
+
+
+
+
 
 // Insert rounds rows for game:
 const insertRoundsRows = function(roundRows, db) {
