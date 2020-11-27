@@ -1,4 +1,4 @@
-const { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, createRoundsRows, insertRoundsRows } = require('../db/helpers/manageGame');
+const { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, getMostRecentRoundsID, createRoundsRows, insertRoundsRows } = require('../db/helpers/manageGame');
 
 const manageGameSocket = (socket, db, io) => {
 
@@ -25,14 +25,15 @@ const manageGameSocket = (socket, db, io) => {
           getQuestionIDs(numQuestions, db)
             .then(data => {
               questionIDs = data.rows;
-              console.log('QuestionIDs:', questionIDs)
-              console.log('playerIDs:', playerIDs)
-              console.log('numRounds:', numRounds)
-              const roundsRows = createRoundsRows(playerIDs, questionIDs, numRounds, db);
-              console.log('roundsRows:', roundsRows)
-              //   .then(data => {
-              //     const roundsRows = data.rows;
-              //   })
+              getMostRecentRoundsID(db)
+              .then(data => {
+                const mostRecentRoundsID = data.rows[0].id;
+                const roundsRows = createRoundsRows(playerIDs, questionIDs, numRounds, mostRecentRoundsID, db);
+                const JSONroundsRows = JSON.stringify(roundsRows)
+                console.log('roundsRows:', roundsRows);
+                console.log('JSONroundsRows:', JSONroundsRows);
+                insertRoundsRows(JSONroundsRows, db);
+                })
             })
         })
     })
