@@ -50,10 +50,9 @@ io.on('connection', socket => {
   let res = {getHeader: () =>{}, setHeader: () => {}};
 
   session(req, res, () => {
+    req.session.user_id = "Cashew"; //set the cookie based on saved user_id
     console.log(req.session); // Do something with req.session
   });
-
-  req.session.user_id = "Cashew"; //set the cookie based on saved user_id
 
   //Confirm socket connection:
   console.log('user connected to the socket');
