@@ -49,6 +49,7 @@ const manageGameSocket = (socket, db, io) => {
         console.log(`Finished_at updated for session ${gameID}:`, data.rows[0]);
       });
     }, 3000)
+ 
 
   });
 
