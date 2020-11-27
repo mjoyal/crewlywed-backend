@@ -1,3 +1,10 @@
+const checkIfNameIsPresent = function(createNewGameData) {
+  if (!createNewGameData.hostName) {
+    return false;
+  }
+  return true;
+}
+
 const createNewGame = function(createNewGameData, db) {
   const query = `
   INSERT INTO sessions (created_at, code, rounds_per_player)
@@ -36,4 +43,4 @@ const returnPlayerData = function(hostID, db) {
 
 };
 
-module.exports = { createNewGame, createNewHost, returnPlayerData };
+module.exports = { checkIfNameIsPresent, createNewGame, createNewHost, returnPlayerData };
