@@ -18,10 +18,13 @@ const {createNewGameSocket} = require('./socket_handlers/createNewGameSocket');
 const {joinGameSocket} = require('./socket_handlers/joinGameSocket');
 const {chatSocket} = require('./socket_handlers/chatSocket');
 const {createLobbySocket} = require('./socket_handlers/createLobbySocket');
+const {manageGameSocket} = require('./socket_handlers/manageGameSocket');
+
 
 // PG database client/connection setup:
 const { Pool } = require('pg');
 const dbParams = require('./lib/db.js');
+
 const db = new Pool(dbParams);
 db.connect();
 
@@ -52,6 +55,7 @@ io.on('connection', socket => {
     createNewGameSocket(socket, db);
     joinGameSocket(socket, db);
     createLobbySocket(socket, db, io);
+    manageGameSocket(socket, db, io);
 });
 
 
