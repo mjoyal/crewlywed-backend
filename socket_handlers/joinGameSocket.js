@@ -1,5 +1,5 @@
 const { returnPlayerData } = require('../db/helpers/createNewGame');
-const { checkIfGameHasStarted, checkIfGameIsFull, getAvatarsNotInUse, createNewPlayer, joinGame } = require('../db/helpers/joinGame');
+const { checkIfGameHasStarted, checkIfGameIsFull, getAvatarsNotInUse, createNewPlayer } = require('../db/helpers/joinGame');
 
 const joinGameSocket = (socket, db) => {
   // Listen for name and game code sent from front end:

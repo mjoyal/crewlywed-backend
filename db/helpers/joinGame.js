@@ -44,13 +44,4 @@ const createNewPlayer = function(createNewPlayerData, db) {
   return db.query(query, params)
 };
 
-
-const joinGame = function(joinGameData, db) {
-  // const query = `
-
-  // ;`;
-  // const params = [];
-  // return db.query(query, params)
-};
-
-module.exports = { checkIfGameHasStarted, checkIfGameIsFull, getAvatarsNotInUse, createNewPlayer, joinGame };
+module.exports = { checkIfGameHasStarted, checkIfGameIsFull, getAvatarsNotInUse, createNewPlayer };
