@@ -82,7 +82,7 @@ const createRoundsRows = function(playerIDs, questionIDs, numRounds, mostRecentR
   for (let i = 0; i < questionIDs.length; i++) {
     roundsRows[i].question_id = questionIDs[i].id;
   }
-  // Add empty id keys:
+  // Add id keys:
   for (let i = 1; i <= roundsRows.length; i++) {
     roundsRows[i-1].id = mostRecentRoundsID + i;
   }
