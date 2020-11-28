@@ -23,6 +23,7 @@ const manageGameSocket = (socket, db, io) => {
         .then(data => {
           numRounds = data.rows[0].rounds_per_player;
           numQuestions = (playerIDs.length * numRounds);
+          io.in(gameRoom).emit('initialNumRounds', numQuestions);
           getQuestionIDs(numQuestions, db)
             .then(data => {
               questionIDs = data.rows;
