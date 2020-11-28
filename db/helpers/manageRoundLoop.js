@@ -34,3 +34,5 @@ const getAwaitChoiceData = function (gameID, db) {
     return data;
   });
 }
+
+module.exports = {getAwaitAnswerData, getAwaitChoiceData}

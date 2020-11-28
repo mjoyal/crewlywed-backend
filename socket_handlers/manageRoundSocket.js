@@ -1,4 +1,5 @@
 const { insertAnswer, getSubmissions } = require('../db/helpers/roundHandler');
+const { getAwaitAnswerData,getAwaitChoiceData} = require('../db/helpers/manageRoundLoop');
 
 const manageRoundSocket = (socket, db, io) => {
 
@@ -64,11 +65,18 @@ socket.on('startGame', (hostInfo) => {
       .then(data => {
         console.log(data.rows);
       })
+      .then(() => {
+        return getAwaitAnswerData(gameRoom, db);
+      })
+      .then((data) => {
+        io.in(gameRoom).emit('awaitAnswer', data.rows);
+      })
   });
 
   socket.on('userChoice', (userChoiceInfo) => {
 
   });
+
 
 };
 
