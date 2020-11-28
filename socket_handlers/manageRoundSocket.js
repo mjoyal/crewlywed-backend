@@ -77,7 +77,7 @@ socket.on('startGame', (hostInfo) => {
       })
       .then((data) => {
         console.log("awaitData", data.rows);
-        io.in(userAnswerInfo.userProfile.code).emit('awaitAnswer', data.rows);
+        io.in(userAnswerInfo.userProfile.code).emit('awaitData', data.rows);
       })
   });
 
@@ -87,6 +87,13 @@ socket.on('startGame', (hostInfo) => {
     addChoice(userChoiceInfo.choice, userChoiceInfo.userProfile.id, db)
       .then(() => {
         console.log(`added choice ${userChoiceInfo.choice} for chooser ${userChoiceInfo.userProfile.id}`)
+      })
+      .then(() => {
+        return getAwaitChoiceData(userChoiceInfo.userProfile.session_id, db);
+      })
+      .then((data) => {
+        console.log("awaitData", data.rows);
+        io.in(userChoiceInfo.userProfile.code).emit('awaitData', data.rows);
       })
   });
 
