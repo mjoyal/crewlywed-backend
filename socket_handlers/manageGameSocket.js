@@ -45,7 +45,13 @@ const manageGameSocket = (socket, db, io) => {
         })
     })
 
-
+    socket.on('noMoreRounds', () => {
+      io.in(gameRoom).emit('finalScore');
+      updateFinishedAt(gameID, db)
+      .then(data => {
+        console.log(`Finished_at updated for session ${gameID}:`, data.rows[0]);
+      });
+    });
     // setTimeout to transition to end of game (this is a placeholder for now; will be updated later):
     // setTimeout(() => {
     //   io.in(gameRoom).emit('finalScore');

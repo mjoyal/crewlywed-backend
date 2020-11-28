@@ -6,7 +6,7 @@ const manageRoundSocket = (socket, db, io) => {
   // manage roundStates
 socket.on('startGame', (hostInfo) => {
   const gameRoom = hostInfo.code;
-  const round = 1; // hardcoded round 1 for now
+  let round = 1; // hardcoded round 1 for now
   // HOST INFO DATA
 
   /*
@@ -19,49 +19,52 @@ socket.on('startGame', (hostInfo) => {
     */
 
   // during this timer, we show the 'ANSWER' page
-  setTimeout(() => {
-    // timer is up for answering, show choose page
-    // get all potential choices (submissions) for round X in session_id Y
+  socket.on('newRound', (roundID) => {
 
-    const submissionInfo = {
-      round: 1,
-      session: hostInfo.session_id
-    };
-    getSubmissions(submissionInfo, db)
-      .then((submissionData) => {
-        io.in(gameRoom).emit('choosePage', submissionData.rows);
-      })
-      .catch(() => {
-        console.error(`can not find submissions for round ${submissionInfo.round} and session ${submissionInfo.session}`)
-      });
-
-
-        // once players are on the choosePage, set new timer
-        // for how long they have to choose the correct answer
-
-
-        setTimeout(() => {
-          // show the reveal page for time to see the results
-          io.in(gameRoom).emit('revealPage');
-          
-
-
-
-
+    setTimeout(() => {
+      // timer is up for answering, show choose page
+      // get all potential choices (submissions) for round X in session_id Y
+  
+      const submissionInfo = {
+        round: roundID,
+        session: hostInfo.session_id
+      };
+      getSubmissions(submissionInfo, db)
+        .then((submissionData) => {
+          io.in(gameRoom).emit('choosePage', submissionData.rows);
+        })
+        .catch(() => {
+          console.error(`can not find submissions for round ${submissionInfo.round} and session ${submissionInfo.session}`)
+        });
+  
+  
+          // once players are on the choosePage, set new timer
+          // for how long they have to choose the correct answer
+  
+  
           setTimeout(() => {
-            // send roundOver info with new question etc
-            // however this is set to finalScore for now.
-            io.in(gameRoom).emit('roundScore');
-
+            // show the reveal page for time to see the results
+            io.in(gameRoom).emit('revealPage');
+            
+  
+  
+  
+  
             setTimeout(() => {
-              io.in(gameRoom).emit('roundOver');
-            }, 10000);
-
-          }, 10000)
-
-        }, 10000);
-
-    }, 20000);
+              // send roundOver info with new question etc
+              // however this is set to finalScore for now.
+              io.in(gameRoom).emit('roundScore');
+  
+              setTimeout(() => {
+                io.in(gameRoom).emit('roundOver');
+              }, 10000);
+  
+            }, 10000)
+  
+          }, 10000);
+  
+      }, 10000);
+  });
 
   });
 
@@ -73,7 +76,7 @@ socket.on('startGame', (hostInfo) => {
         console.log(data.rows);
       })
       .then(() => {
-        return getAwaitAnswerData(userAnswerInfo.userProfile.session_id, db);
+        return getAwaitAnswerData(userAnswerInfo.userProfile.session_id, userAnswerInfo.round, db);
       })
       .then((data) => {
         console.log("awaitData", data.rows);
@@ -89,7 +92,7 @@ socket.on('startGame', (hostInfo) => {
         console.log(`added choice ${userChoiceInfo.choice} for chooser ${userChoiceInfo.userProfile.id}`)
       })
       .then(() => {
-        return getAwaitChoiceData(userChoiceInfo.userProfile.session_id, db);
+        return getAwaitChoiceData(userChoiceInfo.userProfile.session_id, userChoiceInfo.round, db);
       })
       .then((data) => {
         console.log("awaitData", data.rows);
@@ -97,6 +100,10 @@ socket.on('startGame', (hostInfo) => {
       })
   });
 
+  // socket.on('currentRound', (newRound) => {
+  //   round = newRound;
+  //   console.log(newRound);
+  // });
 
 };
 
