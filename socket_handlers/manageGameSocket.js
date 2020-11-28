@@ -7,7 +7,7 @@ const manageGameSocket = (socket, db, io) => {
     const gameID = userProfile.session_id;
 
     io.in(gameRoom).emit('startGameReturn');
-    
+
 
     // Update the session's started_at field in the sessions table:
     updateStartedAt(gameID, db)
@@ -30,7 +30,7 @@ const manageGameSocket = (socket, db, io) => {
               .then(data => {
                 const mostRecentRoundsID = data.rows[0].id;
                 const roundsRows = createRoundsRows(playerIDs, questionIDs, numRounds, mostRecentRoundsID, db);
-                const JSONroundsRows = JSON.stringify(roundsRows)
+                const JSONroundsRows = JSON.stringify(roundsRows);
                 console.log('roundsRows:', roundsRows);
                 console.log('JSONroundsRows:', JSONroundsRows);
                 insertRoundsRows(JSONroundsRows, db);
