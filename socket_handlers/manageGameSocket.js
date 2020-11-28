@@ -7,7 +7,7 @@ const manageGameSocket = (socket, db, io) => {
     const gameID = userProfile.session_id;
 
     io.in(gameRoom).emit('startGameReturn');
-    
+
 
     // Update the session's started_at field in the sessions table:
     updateStartedAt(gameID, db)
@@ -23,6 +23,7 @@ const manageGameSocket = (socket, db, io) => {
         .then(data => {
           numRounds = data.rows[0].rounds_per_player;
           numQuestions = (playerIDs.length * numRounds);
+          io.in(gameRoom).emit('initialNumRounds', numQuestions);
           getQuestionIDs(numQuestions, db)
             .then(data => {
               questionIDs = data.rows;
@@ -30,16 +31,27 @@ const manageGameSocket = (socket, db, io) => {
               .then(data => {
                 const mostRecentRoundsID = data.rows[0].id;
                 const roundsRows = createRoundsRows(playerIDs, questionIDs, numRounds, mostRecentRoundsID, db);
-                const JSONroundsRows = JSON.stringify(roundsRows)
+                // Convert object to JSON to sent to DB:
+                const JSONroundsRows = JSON.stringify(roundsRows);
+                // Console.log's to make sure correct data was generated:
                 console.log('roundsRows:', roundsRows);
                 console.log('JSONroundsRows:', JSONroundsRows);
+                // Insert data into DB:
                 insertRoundsRows(JSONroundsRows, db);
+                // Send roundsRows to FE to manage rounds state:
+                io.in(gameRoom).emit('allRoundsData', roundsRows);
                 })
             })
         })
     })
 
-
+    socket.on('noMoreRounds', () => {
+      io.in(gameRoom).emit('finalScore');
+      updateFinishedAt(gameID, db)
+      .then(data => {
+        console.log(`Finished_at updated for session ${gameID}:`, data.rows[0]);
+      });
+    });
     // setTimeout to transition to end of game (this is a placeholder for now; will be updated later):
     // setTimeout(() => {
     //   io.in(gameRoom).emit('finalScore');
