@@ -1,4 +1,4 @@
-const { insertAnswer, getSubmissions } = require('../db/helpers/roundHandler');
+const { insertAnswer, getSubmissions, addChoice } = require('../db/helpers/roundHandler');
 const { getAwaitAnswerData,getAwaitChoiceData} = require('../db/helpers/manageRoundLoop');
 
 const manageRoundSocket = (socket, db, io) => {
@@ -38,9 +38,16 @@ socket.on('startGame', (hostInfo) => {
 
         // once players are on the choosePage, set new timer
         // for how long they have to choose the correct answer
+
+
         setTimeout(() => {
           // show the reveal page for time to see the results
           io.in(gameRoom).emit('revealPage');
+          
+
+
+
+
           setTimeout(() => {
             // send roundOver info with new question etc
             // however this is set to finalScore for now.
@@ -54,7 +61,7 @@ socket.on('startGame', (hostInfo) => {
 
         }, 10000);
 
-    }, 10000);
+    }, 20000);
 
   });
 
@@ -76,6 +83,11 @@ socket.on('startGame', (hostInfo) => {
 
   socket.on('userChoice', (userChoiceInfo) => {
 
+    console.log(userChoiceInfo);
+    addChoice(userChoiceInfo.choice, userChoiceInfo.userProfile.id, db)
+      .then(() => {
+        console.log(`added choice ${userChoiceInfo.choice} for chooser ${userChoiceInfo.userProfile.id}`)
+      })
   });
 
 
