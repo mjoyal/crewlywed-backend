@@ -1,13 +1,40 @@
+const { insertAnswer, getSubmissions } = require('../db/helpers/roundHandler');
 
 const manageRoundSocket = (socket, db, io) => {
 
   // manage roundStates
 socket.on('startGame', (hostInfo) => {
   const gameRoom = hostInfo.code;
+  const round = 1; // hardcoded round 1 for now
+  // HOST INFO DATA
+
+  /*
+{ id: 33,
+  session_id: 24,
+  avatar_id: 6,
+  username: 'hosty',
+  creator: true,
+  code: 'ngvus' }
+  */
+
   // during this timer, we show the 'ANSWER' page
   setTimeout(() => {
     // timer is up for answering, show choose page
-      io.in(gameRoom).emit('choosePage');
+    // get all potential choices (submissions) for round X in session_id Y
+
+    const submissionInfo = {
+      round: 1,
+      session: hostInfo.session_id
+    };
+    getSubmissions(submissionInfo, db)
+      .then((submissionData) => {
+        io.in(gameRoom).emit('choosePage', submissionData.rows);
+      })
+      .catch(() => {
+        console.error(`can not find submissions for round ${submissionInfo.round} and session ${submissionInfo.session}`)
+      });
+
+
         // once players are on the choosePage, set new timer
         // for how long they have to choose the correct answer
         setTimeout(() => {
@@ -20,23 +47,28 @@ socket.on('startGame', (hostInfo) => {
 
             setTimeout(() => {
               io.in(gameRoom).emit('roundOver');
-            }, 5000);
+            }, 10000);
 
-          }, 5000)
+          }, 10000)
 
-        }, 5000);
+        }, 10000);
 
-    }, 5000);
-
+    }, 10000);
 
   });
 
   // receive user answers
-  socket.on('thisUserSubmitted', userAnswerInfo => {
-    console.log(userAnswerInfo.answer);
+  socket.on('thisUserSubmitted', (userAnswerInfo) => {
+    // add users submission into submissions table
+    insertAnswer(userAnswerInfo, db)
+      .then(data => {
+        console.log(data.rows);
+      })
   });
 
+  socket.on('userChoice', (userChoiceInfo) => {
 
+  });
 
 };
 
