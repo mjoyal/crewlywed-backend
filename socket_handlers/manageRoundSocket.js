@@ -10,13 +10,13 @@ socket.on('startGame', (hostInfo) => {
   // HOST INFO DATA
 
   /*
-{ id: 33,
-  session_id: 24,
-  avatar_id: 6,
-  username: 'hosty',
-  creator: true,
-  code: 'ngvus' }
-  */
+  { id: 33,
+    session_id: 24,
+    avatar_id: 6,
+    username: 'hosty',
+    creator: true,
+    code: 'ngvus' }
+    */
 
   // during this timer, we show the 'ANSWER' page
   setTimeout(() => {
@@ -66,10 +66,11 @@ socket.on('startGame', (hostInfo) => {
         console.log(data.rows);
       })
       .then(() => {
-        return getAwaitAnswerData(gameRoom, db);
+        return getAwaitAnswerData(userAnswerInfo.userProfile.session_id, db);
       })
       .then((data) => {
-        io.in(gameRoom).emit('awaitAnswer', data.rows);
+        console.log("awaitData", data.rows);
+        io.in(userAnswerInfo.userProfile.code).emit('awaitAnswer', data.rows);
       })
   });
 
