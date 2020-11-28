@@ -31,13 +31,17 @@ const manageGameSocket = (socket, db, io) => {
               .then(data => {
                 const mostRecentRoundsID = data.rows[0].id;
                 const roundsRows = createRoundsRows(playerIDs, questionIDs, numRounds, mostRecentRoundsID, db);
-                // Convert object to JSON to sent to DB:
+                // Convert object to JSON to be sent to DB:
                 const JSONroundsRows = JSON.stringify(roundsRows);
                 // Console.log's to make sure correct data was generated:
                 console.log('roundsRows:', roundsRows);
                 console.log('JSONroundsRows:', JSONroundsRows);
                 // Insert data into DB:
-                insertRoundsRows(JSONroundsRows, db);
+                insertRoundsRows(JSONroundsRows, db)
+                  .then(data => {
+                    console.log("RETURNED VALUE FROM INSERT:", data.rows);
+                    const roundIds = data.rows;
+                  });
                 // Send roundsRows to FE to manage rounds state:
                 io.in(gameRoom).emit('allRoundsData', roundsRows);
                 })

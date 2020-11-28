@@ -95,9 +95,18 @@ const insertRoundsRows = function(roundsRows, db) {
     INSERT INTO rounds (SELECT id, victim_id, question_id FROM
     json_populate_recordset (NULL::rounds,
       $1))
+    RETURNING id
   ;`;
   const params = roundsRows;
   return db.query(query, [params])
+};
+
+const getRoundsStateData = function(roundIDs, db) {
+  /* Output data:
+      [ {id: 30, victim_id: 20, question_id: 10, question_text: "What's $name's favorite color?", avatar_id: 2},
+      {id: 31, victim_id: 20, question_id: 5, question_text: "What's $name's favorite movie?", avatar_id: 2},
+      {id: 32, victim_id: 20, question_id: 16, question_text: "What's $name's favorite animal?", avatar_id: 2} ]
+  */
 };
 
 module.exports = { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, getMostRecentRoundsID, createRoundsRows, insertRoundsRows };
