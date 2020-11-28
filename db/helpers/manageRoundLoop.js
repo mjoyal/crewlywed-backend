@@ -1,9 +1,9 @@
 const getAwaitAnswerData = function (gameID, db) {
 
   const query = `
-    SELECT players.*, bool_and((SELECT COUNT(id) 
-      FROM submissions 
-      WHERE submitter_id = players.id 
+    SELECT players.*, bool_and((SELECT COUNT(id)
+      FROM submissions
+      WHERE submitter_id = players.id
       AND round_id = 1) > 0) AS answered
     FROM players
     WHERE players.session_id = $1
@@ -19,10 +19,10 @@ const getAwaitAnswerData = function (gameID, db) {
 
 const getAwaitChoiceData = function (gameID, db) {
   const query = `
-    SELECT players.*, bool_and((SELECT COUNT(choices.id) 
-      FROM choices 
+    SELECT players.*, bool_and((SELECT COUNT(choices.id)
+      FROM choices
       JOIN submissions ON choices.submission_id = submissions.id
-      WHERE chooser_id = players.id 
+      WHERE chooser_id = players.id
       AND round_id = 2) > 0) AS answered
     FROM players
     WHERE players.session_id = $1
