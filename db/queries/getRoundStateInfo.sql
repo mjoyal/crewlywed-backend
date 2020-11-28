@@ -13,4 +13,6 @@ SELECT
   players.avatar_id AS avatar_id
 FROM
   rounds
-  JOIN questions ON
+  JOIN questions ON rounds.question_id = questions.id
+  JOIN players ON rounds.victim_id = players.id
+WHERE rounds.id = 10
