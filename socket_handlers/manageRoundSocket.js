@@ -1,4 +1,5 @@
-const { insertAnswer, getSubmissions } = require('../db/helpers/roundHandler');
+const { insertAnswer, getSubmissions, addChoice } = require('../db/helpers/roundHandler');
+const { getAwaitAnswerData,getAwaitChoiceData} = require('../db/helpers/manageRoundLoop');
 
 const manageRoundSocket = (socket, db, io) => {
 
@@ -9,13 +10,13 @@ socket.on('startGame', (hostInfo) => {
   // HOST INFO DATA
 
   /*
-{ id: 33,
-  session_id: 24,
-  avatar_id: 6,
-  username: 'hosty',
-  creator: true,
-  code: 'ngvus' }
-  */
+  { id: 33,
+    session_id: 24,
+    avatar_id: 6,
+    username: 'hosty',
+    creator: true,
+    code: 'ngvus' }
+    */
 
   // during this timer, we show the 'ANSWER' page
   setTimeout(() => {
@@ -37,9 +38,16 @@ socket.on('startGame', (hostInfo) => {
 
         // once players are on the choosePage, set new timer
         // for how long they have to choose the correct answer
+
+
         setTimeout(() => {
           // show the reveal page for time to see the results
           io.in(gameRoom).emit('revealPage');
+          
+
+
+
+
           setTimeout(() => {
             // send roundOver info with new question etc
             // however this is set to finalScore for now.
@@ -53,7 +61,7 @@ socket.on('startGame', (hostInfo) => {
 
         }, 10000);
 
-    }, 10000);
+    }, 20000);
 
   });
 
@@ -64,11 +72,31 @@ socket.on('startGame', (hostInfo) => {
       .then(data => {
         console.log(data.rows);
       })
+      .then(() => {
+        return getAwaitAnswerData(userAnswerInfo.userProfile.session_id, db);
+      })
+      .then((data) => {
+        console.log("awaitData", data.rows);
+        io.in(userAnswerInfo.userProfile.code).emit('awaitData', data.rows);
+      })
   });
 
   socket.on('userChoice', (userChoiceInfo) => {
 
+    console.log(userChoiceInfo);
+    addChoice(userChoiceInfo.choice, userChoiceInfo.userProfile.id, db)
+      .then(() => {
+        console.log(`added choice ${userChoiceInfo.choice} for chooser ${userChoiceInfo.userProfile.id}`)
+      })
+      .then(() => {
+        return getAwaitChoiceData(userChoiceInfo.userProfile.session_id, db);
+      })
+      .then((data) => {
+        console.log("awaitData", data.rows);
+        io.in(userChoiceInfo.userProfile.code).emit('awaitData', data.rows);
+      })
   });
+
 
 };
 
