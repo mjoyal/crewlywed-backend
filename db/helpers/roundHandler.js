@@ -18,12 +18,18 @@ const getSubmissions = function(submissionInfo, db) {
   WHERE round_id = $1
     AND sessions.id = $2;`;
   const params = [submissionInfo.round, submissionInfo.session];
-  console.log(params);
   return db.query(query, params);
 };
 
 
+const addChoice = function (choice, chooser, db) {
+  const query = `
+  INSERT INTO choices (submission_id, chooser_id)
+  VALUES ($1, $2);`;
+  const params = [choice, chooser];
+  return db.query(query, params);
+};
 
-module.exports = {insertAnswer, getSubmissions}
+module.exports = {insertAnswer, getSubmissions, addChoice}
 
 
