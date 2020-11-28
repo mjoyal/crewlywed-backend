@@ -1,5 +1,5 @@
 const getAwaitAnswerData = function (gameID, db) {
-  //get all players
+
   const query = `
     SELECT players.*, bool_and((SELECT COUNT(id) 
       FROM submissions 
@@ -14,7 +14,7 @@ const getAwaitAnswerData = function (gameID, db) {
     console.log(data.rows);
     return data;
   });
-  //loop through players
+
 };
 
 const getAwaitChoiceData = function (gameID, db) {

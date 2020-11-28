@@ -15,5 +15,5 @@ SELECT players.*, bool_and((SELECT COUNT(id)
     WHERE submitter_id = players.id 
     AND round_id = 1) > 0) AS answered
   FROM players
-  WHERE players.session_id = 1
+  -- WHERE players.session_id = 1
   GROUP BY players.id;
