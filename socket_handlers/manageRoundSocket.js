@@ -16,11 +16,11 @@ socket.on('startGame', (hostInfo) => {
             // send roundOver info with new question etc
             // however this is set to finalScore for now.
             io.in(gameRoom).emit('roundOver');
-          }, 5000)
+          }, 10000)
 
-        }, 5000);
+        }, 10000);
 
-    }, 5000);
+    }, 10000);
 
 
   });
