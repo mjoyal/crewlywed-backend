@@ -1,5 +1,5 @@
 const { insertAnswer, getSubmissions, addChoice } = require('../db/helpers/roundHandler');
-const { getAwaitAnswerData,getAwaitChoiceData} = require('../db/helpers/manageRoundLoop');
+const { getAwaitAnswerData,getAwaitChoiceData, getRevealData} = require('../db/helpers/manageRoundLoop');
 
 const manageRoundSocket = (socket, db, io) => {
 
@@ -44,7 +44,11 @@ socket.on('startGame', (hostInfo) => {
   
           setTimeout(() => {
             // show the reveal page for time to see the results
-            io.in(gameRoom).emit('revealPage');
+            getRevealData(roundID, db)
+            .then((data) => {
+              io.in(gameRoom).emit('revealPage', data.rows);
+
+            });
             
   
   
