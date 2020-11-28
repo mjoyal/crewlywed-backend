@@ -10,6 +10,27 @@ const getAwaitAnswerData = function (gameID, db) {
     GROUP BY players.id;
   ;`;
   const params = gameID;
-  return db.query(query, [params])
+  return db.query(query, [params]).then( (data) => {
+    console.log(data.rows);
+    return data;
+  });
   //loop through players
+};
+
+const getAwaitChoiceData = function (gameID, db) {
+  const query = `
+    SELECT players.*, bool_and((SELECT COUNT(choices.id) 
+      FROM choices 
+      JOIN submissions ON choices.submission_id = submissions.id
+      WHERE chooser_id = players.id 
+      AND round_id = 2) > 0) AS answered
+    FROM players
+    WHERE players.session_id = $1
+    GROUP BY players.id;
+  `;
+  const params = gameID;
+  return db.query(query, [params]).then( (data) => {
+    console.log(data.rows);
+    return data;
+  });
 }
