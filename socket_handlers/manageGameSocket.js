@@ -1,4 +1,4 @@
-const { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, getMostRecentRoundsID, createRoundsRows, insertRoundsRows } = require('../db/helpers/manageGame');
+const { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, getMostRecentRoundsID, createRoundsRows, insertRoundsRows, getRoundsStateData } = require('../db/helpers/manageGame');
 
 const manageGameSocket = (socket, db, io) => {
 
@@ -39,15 +39,15 @@ const manageGameSocket = (socket, db, io) => {
                 // Insert data into DB:
                 insertRoundsRows(JSONroundsRows, db)
                   .then(data => {
-                    console.log("RETURNED VALUE FROM INSERT:", data.rows);
-                    const roundIds = data.rows;
-                  });
-                // Send roundsRows to FE to manage rounds state:
-                io.in(gameRoom).emit('allRoundsData', roundsRows);
-                })
-            })
-        })
-    })
+                    const roundIDs = data.rows;
+                    const roundStateData = getRoundsStateData(roundIDs, db)
+                    // Send roundStateData to FE to manage rounds state:
+                    io.in(gameRoom).emit('allRoundsData', roundsRows);
+                    });
+                });
+            });
+        });
+    });
 
     socket.on('noMoreRounds', () => {
       io.in(gameRoom).emit('finalScore');
