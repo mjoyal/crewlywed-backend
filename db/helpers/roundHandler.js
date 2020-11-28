@@ -30,6 +30,14 @@ const addChoice = function (choice, chooser, db) {
   return db.query(query, params);
 };
 
+const getRevealResults = function (data, db) {
+  const query = `
+  ;`;
+  const params = [];
+  return db.query(query, params); 
+};
+
+
 module.exports = {insertAnswer, getSubmissions, addChoice}
 
 

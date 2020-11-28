@@ -39,21 +39,26 @@ socket.on('startGame', (hostInfo) => {
         // for how long they have to choose the correct answer
 
 
-        // setTimeout(() => {
-        //   // show the reveal page for time to see the results
-        //   io.in(gameRoom).emit('revealPage');
-        //   setTimeout(() => {
-        //     // send roundOver info with new question etc
-        //     // however this is set to finalScore for now.
-        //     io.in(gameRoom).emit('roundScore');
+        setTimeout(() => {
+          // show the reveal page for time to see the results
+          io.in(gameRoom).emit('revealPage');
+          
 
-        //     setTimeout(() => {
-        //       io.in(gameRoom).emit('roundOver');
-        //     }, 10000);
 
-        //   }, 10000)
 
-        // }, 10000);
+
+          setTimeout(() => {
+            // send roundOver info with new question etc
+            // however this is set to finalScore for now.
+            io.in(gameRoom).emit('roundScore');
+
+            setTimeout(() => {
+              io.in(gameRoom).emit('roundOver');
+            }, 10000);
+
+          }, 10000)
+
+        }, 10000);
 
     }, 20000);
 
