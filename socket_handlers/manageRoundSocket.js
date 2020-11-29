@@ -1,5 +1,5 @@
 const { insertAnswer, getSubmissions, addChoice } = require('../db/helpers/roundHandler');
-const { getAwaitAnswerData,getAwaitChoiceData, getRevealData} = require('../db/helpers/manageRoundLoop');
+const { getAwaitAnswerData,getAwaitChoiceData, getRevealData, getScoreData} = require('../db/helpers/manageRoundLoop');
 
 const manageRoundSocket = (socket, db, io) => {
 
@@ -56,8 +56,12 @@ socket.on('startGame', (hostInfo) => {
             setTimeout(() => {
               // send roundOver info with new question etc
               // however this is set to finalScore for now.
-              io.in(gameRoom).emit('roundScore');
+              getScoreData(hostInfo.session_id, db)
+              .then(data => {
+                io.in(gameRoom).emit('roundScore', data.rows);
 
+              });
+  
               setTimeout(() => {
                 io.in(gameRoom).emit('roundOver');
               }, 10000);

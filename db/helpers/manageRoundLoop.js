@@ -46,7 +46,7 @@ const getRevealData = function(roundID, db) {
       JOIN choices ON chooser_id = players.id
       WHERE submission_id = submissions.id)
       players_chose) as choosers,
-    bool_and((SELECT victim_id FROM rounds WHERE rounds.id = $1) = players.id) AS correct
+    coalesce(bool_and((SELECT victim_id FROM rounds WHERE rounds.id = $1) = players.id), false) AS correct
     FROM submissions
     JOIN players ON players.id = submitter_id
     WHERE round_id = $1
@@ -59,4 +59,35 @@ const getRevealData = function(roundID, db) {
     return data;
   });
 }
-module.exports = {getAwaitAnswerData, getAwaitChoiceData, getRevealData}
+
+const getScoreData = function (sessionID, db) {
+  const query = `
+  SELECT players.id, players.avatar_id, username, fool_count, correct_count, SUM((COALESCE(fooled.fool_count, 0) * 50) + (COALESCE(test.correct_count, 0) * 100)) as total FROM
+  players
+  LEFT JOIN ((
+    SELECT players.id AS player_id, count(*) as correct_count
+    FROM choices
+       JOIN players ON players.id = choices.chooser_id
+       JOIN submissions ON submissions.id = choices.submission_id
+       JOIN rounds ON submissions.round_id = rounds.id
+      WHERE submissions.submitter_id = rounds.victim_id
+      GROUP BY players.id
+  )) as test on players.id = test.player_id
+    LEFT JOIN ((
+      SELECT submitter_id, count(*) as fool_count
+      FROM submissions
+        JOIN choices on submissions.id = submission_id
+        JOIN rounds on round_id = rounds.id
+        WHERE submissions.submitter_id != rounds.victim_id
+        GROUP BY submitter_id
+    )) as fooled on players.id = fooled.submitter_id
+  WHERE session_id = $1
+  GROUP BY players.id, fool_count, correct_count
+  ORDER BY total DESC;
+  ;`;
+
+  const params = [sessionID];
+
+  return db.query(query, params);
+}
+module.exports = {getAwaitAnswerData, getAwaitChoiceData, getRevealData, getScoreData}
