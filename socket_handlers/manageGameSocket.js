@@ -1,4 +1,5 @@
 const { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, getMostRecentRoundsID, createRoundsRows, insertRoundsRows, getRoundsStateData } = require('../db/helpers/manageGame');
+const {getScoreData} = require('../db/helpers/manageRoundLoop');
 
 const manageGameSocket = (socket, db, io) => {
 
@@ -52,10 +53,16 @@ const manageGameSocket = (socket, db, io) => {
     });
 
     socket.on('noMoreRounds', () => {
-      io.in(gameRoom).emit('finalScore');
-      updateFinishedAt(gameID, db)
-      .then(data => {
-        console.log(`Finished_at updated for session ${gameID}:`, data.rows[0]);
+      getScoreData(gameID, db)
+      .then((data) => {
+        io.in(gameRoom).emit('finalScore', data.rows);
+        return;
+      })
+      .then(() => {
+        updateFinishedAt(gameID, db)
+        .then(data => {
+          console.log(`Finished_at updated for session ${gameID}:`, data.rows[0]);
+        });
       });
     });
     // setTimeout to transition to end of game (this is a placeholder for now; will be updated later):
