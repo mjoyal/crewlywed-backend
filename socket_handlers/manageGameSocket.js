@@ -40,9 +40,11 @@ const manageGameSocket = (socket, db, io) => {
                 insertRoundsRows(JSONroundsRows, db)
                   .then(data => {
                     const roundIDs = data.rows;
-                    const roundStateData = getRoundsStateData(roundIDs, db)
-                    // Send roundStateData to FE to manage rounds state:
-                    io.in(gameRoom).emit('allRoundsData', roundsRows);
+                    getRoundsStateData(roundIDs, db)
+                      .then(roundsStateData => {
+                        // Send roundStateData to FE to set rounds state:
+                        io.in(gameRoom).emit('allRoundsData', roundsStateData);
+                        });
                     });
                 });
             });

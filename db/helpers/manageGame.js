@@ -109,7 +109,7 @@ const getRoundStateData = function(roundID, db) {
     rounds.question_id AS question_id,
     questions.text AS question_text,
     players.username AS victim_name,
-    players.avatar_id AS avatar_id
+    players.avatar_id AS victim_avatar_id
   FROM
     rounds
     JOIN questions ON rounds.question_id = questions.id
@@ -120,7 +120,6 @@ const getRoundStateData = function(roundID, db) {
 };
 
 const getRoundsStateData = function(roundIDs, db) {
-  const output = [];
   const promises = roundIDs.map(roundIDRow => {
     return new Promise(resolve => {
     roundID = roundIDRow.id;
@@ -130,16 +129,7 @@ const getRoundsStateData = function(roundIDs, db) {
       })
     })
   })
-  Promise.all(promises).then(output => {
-    console.log("TOTAL OUTPUT:", output);
-    return output;
-  });
+  return Promise.all(promises)
 };
-
-  /* Format of returned value from getRoundsStateData:
-      [ {id: 30, victim_id: 20, question_id: 10, question_text: 'What's $name's favorite color?', avatar_id: 2, victim_name: 'Will'},
-      {id: 31, victim_id: 20, question_id: 5, question_text: 'What's $name's favorite movie?', avatar_id: 2, victim_name: 'Will'},
-      {id: 32, victim_id: 20, question_id: 16, question_text: 'What's $name's favorite animal?', avatar_id: 2, victim_name: 'Will'} ]
-  */
 
 module.exports = { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, getMostRecentRoundsID, createRoundsRows, insertRoundsRows, getRoundsStateData };
