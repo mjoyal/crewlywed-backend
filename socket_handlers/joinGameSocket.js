@@ -16,7 +16,8 @@ const joinGameSocket = (socket, db) => {
             numPlayers = data.rows[0].count;
             if (numPlayers < 8) {
               console.log("Success! Game exists, is live, and is not full")
-              socket.emit('joinGameReturn', sessionID)
+              joinGameData.gameID = sessionID;
+              socket.emit('joinGameReturn', joinGameData)
             } else {
               console.log("Error! This game is full")
               socket.emit('joinGameErrorFull', 'sorry, this game is full!')
@@ -36,15 +37,12 @@ const joinGameSocket = (socket, db) => {
   });
 
   // Listen for request from front end for which avatars the new player can use:
-  socket.on('getAvatarsNotInUse', gameID => {
-    getAvatarsNotInUse(gameID, db)
+  socket.on('getAvatarsNotInUse', joinGameData => {
+    getAvatarsNotInUse(joinGameData.gameID, db)
     .then(data => {
       avatars = data.rows,
-      avatarsResponseData = {
-        avatars,
-        gameID
-      }
-      socket.emit('getAvatarsNotInUseReturn', avatarsResponseData);
+      joinGameData.avatars = avatars;
+      socket.emit('getAvatarsNotInUseReturn', joinGameData);
     })
     .catch(e => console.error(e.stack))
   });
