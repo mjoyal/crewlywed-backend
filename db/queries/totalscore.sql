@@ -66,7 +66,7 @@
 SELECT players.id, username, fool_count, correct_count, SUM((COALESCE(fooled.fool_count, 0) * 50) + (COALESCE(test.correct_count, 0) * 100)) as total FROM
   players
   LEFT JOIN ((
-    SELECT players.id AS player_id, CASE WHEN count(*) IS NULL THEN 0 ELSE count(*) END as correct_count
+    SELECT players.id AS player_id, count(*) as correct_count
     FROM choices
        JOIN players ON players.id = choices.chooser_id
        JOIN submissions ON submissions.id = choices.submission_id
@@ -82,5 +82,6 @@ SELECT players.id, username, fool_count, correct_count, SUM((COALESCE(fooled.foo
       WHERE submissions.submitter_id != rounds.victim_id
       GROUP BY submitter_id
   )) as fooled on players.id = fooled.submitter_id
+WHERE session_id = 2
 GROUP BY players.id, fool_count, correct_count
-ORDER BY players.id, total;
+ORDER BY total DESC;

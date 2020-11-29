@@ -1,14 +1,14 @@
 INSERT INTO choices (submission_id, chooser_id)
 VALUES
 --Session 1 Round 1: What is chantal's biggest fear?
-(3, 2),
-(1, 3),
+(3, 2), -- mac fooled will
+(1, 3), --correct for mac
 --Session 1 Round 2: What would will request for their death row meal?
-(5, 1),
-(5, 3),
+(5, 1), --correct for chantal
+(5, 3), --correct for mac
 --Session 1 Round 3: What is mac's sage advice?
-(9, 1),
-(7, 2),
+(9, 1), --correct for chantal
+(7, 2), -- chantal fooled will
 --Session 2, Round 1: What does scooby want to be when they grow up?
 (10, 5),
 (10, 6),
