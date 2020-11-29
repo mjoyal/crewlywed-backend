@@ -11,7 +11,7 @@ const insertAnswer = function(userAnswerInfo, db) {
 const getSubmissions = function(submissionInfo, db) {
 
   const query = `
-  SELECT text, submissions.id
+  SELECT text, submissions.id, submitter_id
   FROM submissions
     JOIN players ON players.id = submissions.submitter_id
     JOIN sessions ON sessions.id = players.session_id
@@ -34,7 +34,7 @@ const getRevealResults = function (data, db) {
   const query = `
   ;`;
   const params = [];
-  return db.query(query, params); 
+  return db.query(query, params);
 };
 
 
