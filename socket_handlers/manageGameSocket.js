@@ -1,4 +1,4 @@
-const { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, getMostRecentRoundsID, createRoundsRows, insertRoundsRows } = require('../db/helpers/manageGame');
+const { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, getMostRecentRoundsID, createRoundsRows, insertRoundsRows, getRoundsStateData } = require('../db/helpers/manageGame');
 
 const manageGameSocket = (socket, db, io) => {
 
@@ -31,19 +31,25 @@ const manageGameSocket = (socket, db, io) => {
               .then(data => {
                 const mostRecentRoundsID = data.rows[0].id;
                 const roundsRows = createRoundsRows(playerIDs, questionIDs, numRounds, mostRecentRoundsID, db);
-                // Convert object to JSON to sent to DB:
+                // Convert object to JSON to be sent to DB:
                 const JSONroundsRows = JSON.stringify(roundsRows);
                 // Console.log's to make sure correct data was generated:
                 console.log('roundsRows:', roundsRows);
                 console.log('JSONroundsRows:', JSONroundsRows);
                 // Insert data into DB:
-                insertRoundsRows(JSONroundsRows, db);
-                // Send roundsRows to FE to manage rounds state:
-                io.in(gameRoom).emit('allRoundsData', roundsRows);
-                })
-            })
-        })
-    })
+                insertRoundsRows(JSONroundsRows, db)
+                  .then(data => {
+                    const roundIDs = data.rows;
+                    getRoundsStateData(roundIDs, db)
+                      .then(roundsStateData => {
+                        // Send roundStateData to FE to set rounds state:
+                        io.in(gameRoom).emit('allRoundsData', roundsStateData);
+                        });
+                    });
+                });
+            });
+        });
+    });
 
     socket.on('noMoreRounds', () => {
       io.in(gameRoom).emit('finalScore');

@@ -41,10 +41,10 @@ const getAwaitChoiceData = function (gameID, roundID, db) {
 const getRevealData = function(roundID, db) {
   const query = `
     SELECT submissions.id as submission_id, text AS answer, players.username AS playerName, players.avatar_id AS avatarID,
-    (SELECT json_agg(players_chose) FROM 
+    (SELECT json_agg(players_chose) FROM
       (SELECT username, avatar_id AS avatarID FROM players
       JOIN choices ON chooser_id = players.id
-      WHERE submission_id = submissions.id) 
+      WHERE submission_id = submissions.id)
       players_chose) as choosers,
     coalesce(bool_and((SELECT victim_id FROM rounds WHERE rounds.id = $1) = players.id), false) AS correct
     FROM submissions
