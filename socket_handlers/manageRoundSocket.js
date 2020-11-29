@@ -61,16 +61,16 @@ socket.on('startGame', (hostInfo) => {
                 io.in(gameRoom).emit('roundScore', data.rows);
 
               });
-  
+
               setTimeout(() => {
                 io.in(gameRoom).emit('roundOver');
-              }, 10000);
+              }, 1000);
 
-            }, 10000)
+            }, 1000)
 
-          }, 10000);
+          }, 1000);
 
-      }, 10000);
+      }, 1000);
   });
 
   });
@@ -106,11 +106,6 @@ socket.on('startGame', (hostInfo) => {
         io.in(userChoiceInfo.userProfile.code).emit('awaitData', data.rows);
       })
   });
-
-  // socket.on('currentRound', (newRound) => {
-  //   round = newRound;
-  //   console.log(newRound);
-  // });
 
 };
 
