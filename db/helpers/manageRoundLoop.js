@@ -62,7 +62,7 @@ const getRevealData = function(roundID, db) {
 
 const getScoreData = function (sessionID, db) {
   const query = `
-  SELECT players.id, username, fool_count, correct_count, SUM((COALESCE(fooled.fool_count, 0) * 50) + (COALESCE(test.correct_count, 0) * 100)) as total FROM
+  SELECT players.id, players.avatar_id, username, fool_count, correct_count, SUM((COALESCE(fooled.fool_count, 0) * 50) + (COALESCE(test.correct_count, 0) * 100)) as total FROM
   players
   LEFT JOIN ((
     SELECT players.id AS player_id, count(*) as correct_count
