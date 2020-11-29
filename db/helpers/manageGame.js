@@ -95,9 +95,41 @@ const insertRoundsRows = function(roundsRows, db) {
     INSERT INTO rounds (SELECT id, victim_id, question_id FROM
     json_populate_recordset (NULL::rounds,
       $1))
+    RETURNING id
   ;`;
   const params = roundsRows;
   return db.query(query, [params])
 };
 
-module.exports = { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, getMostRecentRoundsID, createRoundsRows, insertRoundsRows };
+const getRoundStateData = function(roundID, db) {
+  const query = `
+  SELECT
+    rounds.id AS id,
+    rounds.victim_id AS victim_id,
+    rounds.question_id AS question_id,
+    questions.text AS question_text,
+    players.username AS victim_name,
+    players.avatar_id AS victim_avatar_id
+  FROM
+    rounds
+    JOIN questions ON rounds.question_id = questions.id
+    JOIN players ON rounds.victim_id = players.id
+  WHERE rounds.id = $1`
+  const params = roundID;
+  return db.query(query, [params])
+};
+
+const getRoundsStateData = function(roundIDs, db) {
+  const promises = roundIDs.map(roundIDRow => {
+    return new Promise(resolve => {
+    roundID = roundIDRow.id;
+    getRoundStateData(roundID, db)
+      .then(data => {
+        resolve(data.rows[0]);
+      })
+    })
+  })
+  return Promise.all(promises)
+};
+
+module.exports = { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, getMostRecentRoundsID, createRoundsRows, insertRoundsRows, getRoundsStateData };
