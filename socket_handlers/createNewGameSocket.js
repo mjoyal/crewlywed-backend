@@ -4,12 +4,13 @@ const { checkIfNameIsPresent, createNewGame, createNewHost, returnPlayerData } =
 const createNewGameSocket = (socket, db) => {
   socket.on('createNewGame', createNewGameData => {
     if (checkIfNameIsPresent(createNewGameData)) {
-    console.log(createNewGameData)
+    console.log("createNewGameData:", createNewGameData)
     createNewGame(createNewGameData, db)
     .then(data => {
       const gameID = data.rows[0].id;
       console.log(`New game #${gameID} created`);
-      socket.emit('createNewGameReturn', gameID);
+      createNewGameData.gameID = gameID;
+      socket.emit('createNewGameReturn', createNewGameData);
     })
     .catch(error => {
       console.log(error);
