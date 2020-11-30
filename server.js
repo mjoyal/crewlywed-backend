@@ -12,11 +12,8 @@ const morgan     = require('morgan');
 const server     = require('http').createServer(app);
 
 // Socket handlers:
-const {getScoreSocket} = require('./socket_handlers/getScoreSocket');
-const {getAvatarSocket} = require('./socket_handlers/getAvatarSocket');
 const {createNewGameSocket} = require('./socket_handlers/createNewGameSocket');
 const {joinGameSocket} = require('./socket_handlers/joinGameSocket');
-const {chatSocket} = require('./socket_handlers/chatSocket');
 const {createLobbySocket} = require('./socket_handlers/createLobbySocket');
 const {manageGameSocket} = require('./socket_handlers/manageGameSocket');
 const {manageRoundSocket} = require('./socket_handlers/manageRoundSocket');
@@ -46,12 +43,6 @@ io.on('connection', socket => {
   socket.emit('connectMessage','you are connected to the socket!');
 
     // Socket event handlers:
-    //TRIAL:
-    chatSocket(socket, io, db);
-    getAvatarSocket(socket, db);
-    getScoreSocket(socket, db);
-
-    //APP:
     createNewGameSocket(socket, db);
     joinGameSocket(socket, db);
     createLobbySocket(socket, db, io);
