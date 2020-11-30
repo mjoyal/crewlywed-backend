@@ -22,7 +22,7 @@ const getSubmissions = function(submissionInfo, db) {
 };
 
 
-const addChoice = function (choice, chooser, db) {
+const insertChoice = function (choice, chooser, db) {
   const query = `
   INSERT INTO choices (submission_id, chooser_id)
   VALUES ($1, $2);`;
@@ -38,6 +38,6 @@ const getRevealResults = function (data, db) {
 };
 
 
-module.exports = {insertAnswer, getSubmissions, addChoice}
+module.exports = {insertAnswer, getSubmissions, insertChoice}
 
 

@@ -1,4 +1,4 @@
-const { insertAnswer, getSubmissions, addChoice } = require('../db/helpers/roundHandler');
+const { insertAnswer, getSubmissions, insertChoice } = require('../db/helpers/roundHandler');
 const { getAwaitAnswerData,getAwaitChoiceData, getRevealData, getScoreData} = require('../db/helpers/manageRoundLoop');
 
 const manageRoundSocket = (socket, db, io) => {
@@ -6,16 +6,6 @@ const manageRoundSocket = (socket, db, io) => {
   // manage roundStates
 socket.on('startGame', (hostInfo) => {
   const gameRoom = hostInfo.code;
-  // HOST INFO DATA
-
-  /*
-  { id: 33,
-    session_id: 24,
-    avatar_id: 6,
-    username: 'hosty',
-    creator: true,
-    code: 'ngvus' }
-    */
 
   // during this timer, we show the 'ANSWER' page
   socket.on('newRound', (roundID) => {
@@ -72,10 +62,9 @@ socket.on('startGame', (hostInfo) => {
 
       }, 10000); // ANSWER
   });
+});
 
-  });
-
-  // receive user answers
+  // Receive user submission:
   socket.on('thisUserSubmitted', (userAnswerInfo) => {
     // add users submission into submissions table
     insertAnswer(userAnswerInfo, db)
@@ -91,10 +80,11 @@ socket.on('startGame', (hostInfo) => {
       })
   });
 
+  // Receive user choice:
   socket.on('thisUserChose', (userChoiceInfo) => {
 
     console.log(userChoiceInfo);
-    addChoice(userChoiceInfo.choice, userChoiceInfo.userProfile.id, db)
+    insertChoice(userChoiceInfo.choice, userChoiceInfo.userProfile.id, db)
       .then(() => {
         console.log(`added choice ${userChoiceInfo.choice} for chooser ${userChoiceInfo.userProfile.id}`)
       })
