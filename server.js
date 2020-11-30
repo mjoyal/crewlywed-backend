@@ -16,7 +16,8 @@ const {createNewGameSocket} = require('./socket_handlers/createNewGameSocket');
 const {joinGameSocket} = require('./socket_handlers/joinGameSocket');
 const {createLobbySocket} = require('./socket_handlers/createLobbySocket');
 const {manageGameSocket} = require('./socket_handlers/manageGameSocket');
-const {manageRoundSocket} = require('./socket_handlers/manageRoundSocket');
+const {manageRoundsSocket_roundTransitions} = require('./socket_handlers/manageRoundsSocket_roundTransitions');
+const {manageRoundsSocket_userInput} = require('./socket_handlers/manageRoundsSocket_userInput');
 
 // PG database client/connection setup:
 const { Pool } = require('pg');
@@ -47,7 +48,9 @@ io.on('connection', socket => {
     joinGameSocket(socket, db);
     createLobbySocket(socket, db, io);
     manageGameSocket(socket, db, io);
-    manageRoundSocket(socket, db, io);
+    manageRoundsSocket_roundTransitions(socket, db, io);
+    manageRoundsSocket_userInput(socket, db, io);
+
 });
 
 

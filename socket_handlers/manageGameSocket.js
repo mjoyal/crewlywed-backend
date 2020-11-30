@@ -1,5 +1,5 @@
 const { updateStartedAt, updateFinishedAt, getPlayerIDs, getNumRoundsPerPlayer, getQuestionIDs, getMostRecentRoundsID, createRoundsRows, insertRoundsRows, getRoundsStateData } = require('../db/helpers/manageGame');
-const {getScoreData} = require('../db/helpers/manageRoundLoop');
+const {getScoreData} = require('../db/helpers/manageRounds');
 
 const manageGameSocket = (socket, db, io) => {
 
