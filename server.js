@@ -16,7 +16,6 @@ const {getScoreSocket} = require('./socket_handlers/getScoreSocket');
 const {getAvatarSocket} = require('./socket_handlers/getAvatarSocket');
 const {createNewGameSocket} = require('./socket_handlers/createNewGameSocket');
 const {joinGameSocket} = require('./socket_handlers/joinGameSocket');
-const {chatSocket} = require('./socket_handlers/chatSocket');
 const {createLobbySocket} = require('./socket_handlers/createLobbySocket');
 const {manageGameSocket} = require('./socket_handlers/manageGameSocket');
 const {manageRoundSocket} = require('./socket_handlers/manageRoundSocket');
@@ -47,7 +46,6 @@ io.on('connection', socket => {
 
     // Socket event handlers:
     //TRIAL:
-    chatSocket(socket, io, db);
     getAvatarSocket(socket, db);
     getScoreSocket(socket, db);
 
