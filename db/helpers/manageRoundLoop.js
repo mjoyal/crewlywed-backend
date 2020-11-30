@@ -28,8 +28,8 @@ const getAwaitAnswerData = function (gameID, roundID, db) {
 };
 
 // CREATE THIS FUNCTION:
-const checkIfEveryoneHasSubmitted = function(roundID, gameID) {
-  const query = `SELECT bool_and(answered) AS everyone_submitted FROM (
+const checkIfEveryoneHasSubmitted = function(roundID, gameID, db) {
+  const query = `SELECT bool_and(answered) AS submitted_status FROM (
     SELECT players.*, bool_and((SELECT COUNT(id)
       FROM submissions
       WHERE submitter_id = players.id
@@ -89,8 +89,8 @@ const getAwaitChoiceData = function (gameID, roundID, db) {
 };
 
 // CREATE THIS FUNCTION:
-const checkIfEveryoneHasChosen = function(roundID, gameID) {
-  const query = `SELECT bool_and(chosen) AS everyone_chosen FROM (
+const checkIfEveryoneHasChosen = function(roundID, gameID, db) {
+  const query = `SELECT bool_and(chosen) AS chosen_status FROM (
     SELECT players.*, bool_and((SELECT COUNT(choices.id)
       FROM choices
       JOIN submissions ON choices.submission_id = submissions.id

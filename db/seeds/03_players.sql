@@ -7,6 +7,6 @@ VALUES
 (2, 5, 'shaggy', false),
 (2, 6, 'velma', false),
 (2, 7, 'daphne', true),
-(2, 8, 'fred', false)
--- (1, 4, 'never', false)
+(2, 8, 'fred', false),
+(1, 4, 'never', false)
 ;
