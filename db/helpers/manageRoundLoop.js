@@ -1,3 +1,13 @@
+const insertAnswer = function(userAnswerInfo, db) {
+  const query = `
+  INSERT INTO submissions (submitter_id, round_id, text)
+  VALUES ($1, $2, $3)
+  RETURNING id
+  ;`;
+  const params = [userAnswerInfo.userProfile.id, userAnswerInfo.round, userAnswerInfo.answer];
+  return db.query(query, params)
+};
+
 const getAwaitAnswerData = function (gameID, roundID, db) {
 
   const query = `
@@ -18,6 +28,27 @@ const getAwaitAnswerData = function (gameID, roundID, db) {
 
 };
 
+const getSubmissions = function(submissionInfo, db) {
+
+  const query = `
+  SELECT text, submissions.id, submitter_id
+  FROM submissions
+    JOIN players ON players.id = submissions.submitter_id
+    JOIN sessions ON sessions.id = players.session_id
+  WHERE round_id = $1
+    AND sessions.id = $2;`;
+  const params = [submissionInfo.round, submissionInfo.session];
+  return db.query(query, params);
+};
+
+const insertChoice = function (choice, chooser, db) {
+  const query = `
+  INSERT INTO choices (submission_id, chooser_id)
+  VALUES ($1, $2);`;
+  const params = [choice, chooser];
+  return db.query(query, params);
+};
+
 const getAwaitChoiceData = function (gameID, roundID, db) {
   const query = `
     SELECT players.*, bool_and((SELECT COUNT(choices.id)
@@ -36,7 +67,6 @@ const getAwaitChoiceData = function (gameID, roundID, db) {
     return data;
   });
 }
-
 
 const getRevealData = function(roundID, db) {
   const query = `
@@ -90,4 +120,5 @@ const getScoreData = function (sessionID, db) {
 
   return db.query(query, params);
 }
-module.exports = {getAwaitAnswerData, getAwaitChoiceData, getRevealData, getScoreData}
+
+module.exports = {insertAnswer, getAwaitAnswerData, getSubmissions, insertChoice, getAwaitChoiceData, getRevealData, getScoreData}
