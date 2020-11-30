@@ -33,7 +33,9 @@ CREATE TABLE players (
 
 CREATE TABLE questions (
   id SERIAL PRIMARY KEY,
-  text TEXT NOT NULL
+  text TEXT NOT NULL,
+  victim_version TEXT,
+  rating VARCHAR(50) DEFAULT 'PG'
 );
 
 CREATE TABLE rounds (
