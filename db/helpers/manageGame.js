@@ -51,6 +51,7 @@ const getQuestionIDs = function(num, db) {
   const query = `
     SELECT id
     FROM questions
+    WHERE rating = 'PG'
     ORDER BY RANDOM()
     LIMIT $1
   ;`;
