@@ -1,4 +1,4 @@
-const { insertAnswer, getAwaitAnswerData, getSubmissions, insertChoice, getAwaitChoiceData, getRevealData, getScoreData} = require('../db/helpers/manageRoundLoop');
+const { insertAnswer, getAwaitAnswerData, checkIfEveryoneHasSubmitted, getSubmissions, insertChoice, getAwaitChoiceData, checkIfEveryoneHasChosen, getRevealData, getScoreData} = require('../db/helpers/manageRoundLoop');
 
 const manageRoundSocket = (socket, db, io) => {
 

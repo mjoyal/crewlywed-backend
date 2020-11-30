@@ -25,7 +25,22 @@ const getAwaitAnswerData = function (gameID, roundID, db) {
     // console.log(data.rows);
     return data;
   });
+};
 
+// CREATE THIS FUNCTION:
+const checkIfEveryoneHasSubmitted = function(roundID, gameID) {
+  const query = `SELECT bool_and(answered) AS everyone_submitted FROM (
+    SELECT players.*, bool_and((SELECT COUNT(id)
+      FROM submissions
+      WHERE submitter_id = players.id
+      AND round_id = $1) > 0) AS answered
+    FROM players
+    WHERE players.session_id = $2
+    GROUP BY players.id
+    ORDER BY players.id
+  ) AS answered;`;
+  const params = [roundID, gameID];
+  return db.query(query, params);
 };
 
 const getSubmissions = function(submissionInfo, db) {
@@ -58,6 +73,11 @@ const getAwaitChoiceData = function (gameID, roundID, db) {
       AND round_id = $1) > 0) AS answered
     FROM players
     WHERE players.session_id = $2
+      AND players.id NOT IN (
+        SELECT victim_id
+        FROM rounds
+        WHERE rounds.id = $1
+      )
     GROUP BY players.id
     ORDER BY players.id;
   `;
@@ -66,7 +86,28 @@ const getAwaitChoiceData = function (gameID, roundID, db) {
     // console.log(data.rows);
     return data;
   });
-}
+};
+
+// CREATE THIS FUNCTION:
+const checkIfEveryoneHasChosen = function(roundID, gameID) {
+  const query = `SELECT bool_and(chosen) AS everyone_chosen FROM (
+    SELECT players.*, bool_and((SELECT COUNT(choices.id)
+      FROM choices
+      JOIN submissions ON choices.submission_id = submissions.id
+      WHERE chooser_id = players.id
+      AND round_id = $1) > 0) AS chosen
+    FROM players
+    WHERE players.session_id = $2
+      AND players.id NOT IN (
+        SELECT victim_id
+        FROM rounds
+        WHERE rounds.id = $1
+      )
+    GROUP BY players.id
+  ) AS chosen;`;
+  const params = [roundID, gameID];
+  return db.query(query, params);
+};
 
 const getRevealData = function(roundID, db) {
   const query = `
@@ -88,7 +129,7 @@ const getRevealData = function(roundID, db) {
     // console.log(data.rows);
     return data;
   });
-}
+};
 
 const getScoreData = function (sessionID, db) {
   const query = `
@@ -115,10 +156,8 @@ const getScoreData = function (sessionID, db) {
   GROUP BY players.id, fool_count, correct_count
   ORDER BY total DESC;
   ;`;
-
   const params = [sessionID];
-
   return db.query(query, params);
-}
+};
 
-module.exports = {insertAnswer, getAwaitAnswerData, getSubmissions, insertChoice, getAwaitChoiceData, getRevealData, getScoreData}
+module.exports = {insertAnswer, getAwaitAnswerData, checkIfEveryoneHasSubmitted, getSubmissions, insertChoice, getAwaitChoiceData, checkIfEveryoneHasChosen, getRevealData, getScoreData}
