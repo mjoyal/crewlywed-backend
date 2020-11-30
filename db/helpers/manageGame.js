@@ -51,6 +51,7 @@ const getQuestionIDs = function(num, db) {
   const query = `
     SELECT id
     FROM questions
+    WHERE rating = 'PG'
     ORDER BY RANDOM()
     LIMIT $1
   ;`;
@@ -108,6 +109,7 @@ const getRoundStateData = function(roundID, db) {
     rounds.victim_id AS victim_id,
     rounds.question_id AS question_id,
     questions.text AS question_text,
+    questions.victim_version AS question_text_victim,
     players.username AS victim_name,
     players.avatar_id AS victim_avatar_id
   FROM
