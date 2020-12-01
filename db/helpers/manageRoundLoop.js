@@ -27,6 +27,11 @@ const getAwaitChoiceData = function (gameID, roundID, db) {
       AND round_id = $1) > 0) AS answered
     FROM players
     WHERE players.session_id = $2
+      AND players.id NOT IN (
+        SELECT victim_id
+        FROM rounds
+        WHERE rounds.id = $1
+      )
     GROUP BY players.id
     ORDER BY players.id;
   `;
