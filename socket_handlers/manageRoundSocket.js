@@ -3,11 +3,18 @@ const { insertAnswer, getAwaitAnswerData, checkIfEveryoneHasSubmitted, insertCho
 const manageRoundSocket = (socket, db, io) => {
   socket.on('startGame', (hostInfo) => {
 
+    //VARIABLES:
     const gameRoom = hostInfo.code;
     const gameID = hostInfo.session_id;
 
     // let answerDone = false;
     // let chooseDone = false;
+
+    // Timer values (in milliseconds):
+    const answerDuration = 5000;
+    const chooseDuration = 5000;
+    const revealDuration = 3000;
+    const roundscoreDuration = 3000;
 
     // FUNCTIONS:
     // Function for Timer #1:
@@ -39,12 +46,6 @@ const manageRoundSocket = (socket, db, io) => {
     };
 
     // TRANSITION EVENT LISTENERS AND TIMERS:
-    // Timer values (in milliseconds):
-    const answerDuration = 10000;
-    const chooseDuration = 10000;
-    const revealDuration = 5000;
-    const roundscoreDuration = 5000;
-
     // Timer #1: Show ANSWER / AWAIT until timer expires OR until everyone submits, then show CHOOSE:
     socket.on('newRound', roundID => {
       const answerTimer = setTimeout(() => {
