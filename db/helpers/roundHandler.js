@@ -16,7 +16,8 @@ const getSubmissions = function(submissionInfo, db) {
     JOIN players ON players.id = submissions.submitter_id
     JOIN sessions ON sessions.id = players.session_id
   WHERE round_id = $1
-    AND sessions.id = $2;`;
+    AND sessions.id = $2
+    ORDER BY RANDOM();`;
   const params = [submissionInfo.round, submissionInfo.session];
   return db.query(query, params);
 };
