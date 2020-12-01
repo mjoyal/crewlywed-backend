@@ -46,7 +46,7 @@ const checkIfEveryoneHasSubmitted = function(roundID, gameID, db) {
 const getSubmissions = function(submissionInfo, db) {
 
   const query = `
-  SELECT text, submissions.id, submitter_id
+  SELECT text, submissions.id, submitter_id, round_id
   FROM submissions
     JOIN players ON players.id = submissions.submitter_id
     JOIN sessions ON sessions.id = players.session_id

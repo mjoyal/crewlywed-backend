@@ -3,46 +3,89 @@ const { getSubmissions, getRevealData, getScoreData} = require('../db/helpers/ma
 const manageRoundsSocket_roundTransitions = (socket, db, io) => {
   socket.on('startGame', (hostInfo) => {
     const gameRoom = hostInfo.code;
+    const gameID = hostInfo.session_id;
 
+    // FUNCTIONS:
+    // Function for Timer #1:
+    const showChoose = function(hostInfo, roundID, db) {
+      const submissionInfo = {
+        round: roundID,
+        session: hostInfo.session_id
+      };
+      getSubmissions(submissionInfo, db)
+      .then((submissionData) => {
+        io.in(gameRoom).emit('choosePage', submissionData.rows);
+      })
+    };
+
+    // Function for Timer #2:
+    const showReveal = function(roundID, db) {
+      getRevealData(roundID, db)
+      .then((data) => {
+        io.in(gameRoom).emit('revealPage', data.rows);
+      })
+    };
+
+    // Function for Timer #3:
+    const showRoundscore = function(gameID, db) {
+      getScoreData(gameID, db)
+      .then(data => {
+        io.in(gameRoom).emit('roundScore', data.rows)
+      });
+    };
+
+    // LISTENERS AND TIMERS:
+    // Timer values (in milliseconds):
+    const answerDuration = 8000;
+    const chooseDuration = 5000;
+    const revealDuration = 3000;
+    const roundscoreDuration = 3000;
+
+    // Timer #1: Show ANSWER / AWAIT until timer expires OR until everyone submits, then show CHOOSE:
     socket.on('newRound', roundID => {
-      // ST #1: Show ANSWER until ST expires, then show CHOOSE:
-      setTimeout(() => {
-        const submissionInfo = {
-          round: roundID,
-          session: hostInfo.session_id
+
+      let done = false;
+
+      const answerTimer = setTimeout(() => {
+          showChoose(hostInfo, roundID, db);
+        }, answerDuration);
+
+        if(true && !done) {
+          showChoose(hostInfo, roundID, db);
+          clearTimeout(answerTimer);
+          done = true;
         };
-        getSubmissions(submissionInfo, db)
-          .then((submissionData) => {
-            io.in(gameRoom).emit('choosePage', submissionData.rows);
-          })
-        }, 10000);
+
       });
 
-    socket.on('newRevealPage', () => {
-       // ST #2: Show CHOOSE until ST expires. then show REVEAL:
-       setTimeout(() => {
-        getRevealData(roundID, db)
-        .then((data) => {
-          io.in(gameRoom).emit('revealPage', data.rows);
-        });
-      }, 10000);
+    // Timer #2: Show CHOOSE / AWAIT until timer expires OR until everyone chooses. then show REVEAL:
+    socket.on('newRevealPage', roundID => {
+
+      let done = false;
+
+      const chooseTimer = setTimeout(() => {
+        showReveal(roundID, db);
+      }, chooseDuration);
+
+      if(true && !done) {
+        showReveal(roundID, db);
+        clearTimeout(chooseTimer);
+        done = true;
+      };
     });
 
+    // Timer #3: Show REVEAL until timer expires, then show ROUNDSCORE:
     socket.on('newRoundScorePage', () => {
-       // ST #3: Show REVEAL until ST expires, then show ROUNDSCORE:
-       setTimeout(() => {
-        getScoreData(hostInfo.session_id, db)
-        .then(data => {
-          io.in(gameRoom).emit('roundScore', data.rows);
-        });
-      }, 8000)
+      const revealTimer = setTimeout(() => {
+        showRoundscore(gameID, db);
+      }, revealDuration);
     });
 
+    // Timer #4: Show ROUNDSCORE until timer expires, then show ANSWER:
     socket.on('newAnswerPage', () => {
-      // ST #4: Show ROUNDSCORE until ST expires, then show ANSWER:
-      setTimeout(() => {
+      const roundscoreTimer = setTimeout(() => {
         io.in(gameRoom).emit('roundOver');
-      }, 2000);
+      }, roundscoreDuration);
     }); //can we also figure out finalscore here?
   })
 };
