@@ -61,16 +61,16 @@ socket.on('startGame', (hostInfo) => {
                 io.in(gameRoom).emit('roundScore', data.rows);
 
               });
-  
+
               setTimeout(() => {
                 io.in(gameRoom).emit('roundOver');
-              }, 10000);
+              }, 6000); // Roundscore
 
-            }, 10000)
+            }, 8000) // Reveal
 
-          }, 10000);
+          }, 12000); // Choose
 
-      }, 10000);
+      }, 12000); // Answer
   });
 
   });
