@@ -23,7 +23,12 @@ const { Pool } = require('pg');
 const dbParams = require('./lib/db.js');
 
 const db = new Pool(dbParams);
-db.connect();
+db.connect(
+  console.log("Successfully connected to the DB")
+);
+
+db.query('SELECT 1 + 1;')
+  .then(data => console.log("What is 1+1?", data.rows));
 
 // See HTTP requests in terminal:
 app.use(morgan('dev'));
