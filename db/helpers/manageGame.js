@@ -52,7 +52,7 @@ const getQuestionIDs = function(num, db) {
     SELECT id
     FROM questions
     WHERE rating = 'PG'
-    ORDER BY RANDOM()
+    ORDER BY id ASC
     LIMIT $1
   ;`;
   const params = num;
