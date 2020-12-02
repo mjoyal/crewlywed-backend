@@ -64,13 +64,13 @@ socket.on('startGame', (hostInfo) => {
 
               setTimeout(() => {
                 io.in(gameRoom).emit('roundOver');
-              }, 6000); // Roundscore
+              }, 5000); // Roundscore
 
-            }, 8000) // Reveal
+            }, 10000) // Reveal
 
-          }, 12000); // Choose
+          }, 15000); // Choose
 
-      }, 12000); // Answer
+      }, 15000); // Answer
   });
 
   });
