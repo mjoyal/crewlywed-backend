@@ -1,8 +1,8 @@
-![icon](public/logo-text.png) 
+![header](public/header.png) 
 
 The newlywed game for you and your "crew"! Test your knowledge of your crew with this live browser-based game!  A live updating interactive React based game. Users are able to join different game rooms in order to play with their friends.
 
-### Rules 
+### <ins> Rules <ins/>
 
 Everyone joins a game room and the game begins.
 
@@ -14,11 +14,33 @@ Points are won by (i) guessing the victim's answer and (ii) fooling others into 
 
 [Frontend Repo](https://github.com/mjoyal/crewlywed-frontend)
 
+## Game Play
+
+### Players entering the game lobby
+![lobby](public/crewlywed-lobby.gif) 
+
+### Player answering a question as the victim
+
+![answer](public/crewlywed-answer.gif) 
+
+### Player choosing an answer for the victim
+
+![choose](public/crewlywed-choose.gif) 
+
 ## Project Contributors && Primary Responsibilities
 
-- [Will Portman](https://github.com/wdportman)
-- [MacKenzie Joyal](https://github.com/mjoyal)
-- [Chantal Snazel](https://github.com/CLSnazel)
+### [Will Portman](https://github.com/wdportman)
+  - Frontend & Backend Logic
+  - Database Management
+  - Socket.io setup
+### [MacKenzie Joyal](https://github.com/mjoyal)
+  - Frontend & Backend Logic
+  - Socket.io research & setup
+  - Illustrations and UI
+### [Chantal Snazel](https://github.com/CLSnazel)
+  - Frontend & Backend Logic
+  - UI wireframing and prototyping
+  - Responsive SCSS 
 
 ## Built with 
 
@@ -26,9 +48,11 @@ Points are won by (i) guessing the victim's answer and (ii) fooling others into 
 - React
 - React Router
 - SCSS
+- Framer
 
 ### Back-end 
 
 - Socket.io
 - Express
 - Node.js
+- Postgres
