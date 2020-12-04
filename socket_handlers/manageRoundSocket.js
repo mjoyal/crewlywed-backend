@@ -68,9 +68,9 @@ socket.on('startGame', (hostInfo) => {
 
             }, 10000) // Reveal
 
-          }, 15000); // Choose
+          }, 45000); // Choose
 
-      }, 15000); // Answer
+      }, 45000); // Answer
   });
 
   });
