@@ -12,7 +12,7 @@ VALUES
 ('How would $name survive the apocalypse?', 'How would you survive the apocalypse?', 'PG'),
 ('If $name were a potato, how would they be cooked?', 'If you were a potato, how would you be cooked?', 'PG'),
 (E'Where is $name\'s favorite place?', 'Where is your favorite place?', 'PG'),
-'What would you do if you were invisible?', 'PG'),
+('What would $name do if they were invisible?', 'What would you do if you were invisible?', 'PG'),
 (E'What is $name\'s biggest pet peeve?', 'What is your biggest pet peeve?', 'PG'),
 (E'What is $name\'s favorite catchphrase?', 'What is your favorite catchphrase?', 'PG'),
 ('If $name had a superpower, what would it be?', 'If you had a superpower, what would it be?', 'PG'),
