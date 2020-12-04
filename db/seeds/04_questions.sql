@@ -39,5 +39,5 @@ VALUES
 (E'What is $name\'s cheat-day meal?', 'What is your cheat-day meal?', 'PG'),
 (E'What is $name\'s best quality?', 'What is your best quality?', 'PG'),
 (E'What is $name\'s favorite condiment?', 'What is your favorite condiment?', 'PG'),
-('If $name could choose any historical figure to be their friend, who would it be?', 'If you could choose any historical figure to be their friend, who would it be?', 'PG')
+('If $name could choose any historical figure to be their friend, who would it be?', 'If you could choose any historical figure to be your friend, who would it be?', 'PG')
 ;
